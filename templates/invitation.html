@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="asApp" data-ng-controller="SiteCtrl as siteCtrl">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/account.min.css')}}">
+</head>
+<body data-ng-controller="InvitationCtrl">
+	{% include "include/tags.html" %}
+	<div>
+		<div id="splitter-viewport">
+			<div data-as-splitter>
+				{% include "include/nav.html" %}
+				<div id="project" data-as-splitter-panel="left">
+					<div id="viewport">
+						<div id="title">
+							Accept Invitation
+						</div>
+						<div id="account">
+							<div class="alert alert-danger ng-cloak" role="alert" data-ng-show="msg">{{!msg}}</div>
+							<h4 data-ng-hide="msg" data-ng-cloak>{{!activate.full_name}} has invited you to join "{{!activate.project_name}}"</h4>
+							<div data-ng-hide="continue">
+								<button class="btn btn-primary" data-ng-click="add()">
+									Add Project
+								</button>
+								<button class="btn btn-danger" data-ng-click="decline()">
+									Decline Invitation
+								</button>
+							</div>
+							<div data-ng-show="continue">
+								<button class="btn btn-default" data-ng-click="goToProjects()">
+									View Projects
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div data-as-splitter-panel="right">
+					<div data-ng-view></div>
+				</div>
+				<div id="tabs" class="as-splitter-handle">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

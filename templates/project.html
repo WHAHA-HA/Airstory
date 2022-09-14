@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="asApp" data-ng-controller="SiteCtrl as siteCtrl">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/project.min.css')}}">
+	<link href="https://fonts.googleapis.com/css?family=Alegreya|Amatic+SC|Bree+Serif|Merriweather|Permanent+Marker|Pinyon+Script|Playfair+Display|Roboto|Roboto+Mono|Ultra|Varela+Round" rel="stylesheet">
+</head>
+<body data-ng-controller="ProjectCtrl as projectCtrl">
+	{% include "include/tags.html" %}
+	<div data-ng-controller="UsersCtrl as usersCtrl">
+		<div id="splitter-viewport" data-ng-controller="DocumentsCtrl as documentsCtrl">
+			<div data-as-splitter data-ng-controller="CitationsCtrl as citationsCtrl">
+				{% include "include/nav.html" %}
+				<div id="project" data-as-splitter-panel="left" data-ng-class="{'hide-header': documentsCtrl.hideHeader}">
+					<nav class="navbar navbar-default">
+						<div class="container-fluid">
+							<div id="left-menu" data-ng-class="{'left-menu-extra': !citationsCtrl.visible()}">
+								<span id="page-title" class="ng-cloak"><span data-ng-cloak data-ng-if="projectCtrl.project.status == 'delete'">Deleting: </span><span data-ng-cloak data-ng-if="projectCtrl.project.status == 'archive'">Archived: </span>{{!projectCtrl.project.title}}</span>
+								<span class="cog ng-cloak" data-toggle="modal" data-target="#edit-project-modal" data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 5)"><span class="fa fa-cog" aria-hidden="true"></span></span>
+							</div>
+							<div id="right-menu">
+								<div id="user-menu" class="btn-group ng-cloak">
+									<button data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 5)" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<img src="{{static_url('images/dropdown-arrow.svg')}}" />
+										<span class="sr-only">Toggle Dropdown</span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right">
+										<li><a data-toggle="modal" data-target="#add-user-modal" data-ng-click="usersCtrl.populateInvitation()">Invite new users...</a></li>
+										<li><a data-toggle="modal" data-target="#manage-user-modal" data-ng-click="usersCtrl.populateInvitations()">Manage Users</a></li>
+									</ul>
+								</div>
+								<div class="users ng-cloak">
+									<div class="user-wrapper clearfix">
+										<div class="avatar" data-ng-repeat="userId in projectCtrl.subscribed" data-as-tooltip title="{{!usersCtrl.userLookup[userId].first_name}} {{!usersCtrl.userLookup[userId].last_name}}"><img src="{{!usersCtrl.userLookup[userId].avatar}}?d=mm&s=30" /></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</nav>
+					<div data-ng-controller="CommentsCtrl as commentsCtrl" data-ng-cloak data-ng-if="documentsCtrl.documentType == 'e'" class="viewport">
+						<div data-ng-controller="DocumentCtrl as documentCtrl" class="full-height">
+							<div class="container-fluid" id="toolbar-container">
+								<div id="toolbar">
+									<div class="controls" data-ng-show="!documentCtrl.message && !documentCtrl.errorAction && siteCtrl.validatePermission(projectCtrl.projectId, 4)">
+										<div class="control-buttons">
+											<div class="visible-buttons">
+												<div id="font-type" class="btn-group control control-separator">
+													<button type="button" class="btn btn-default dropdown-toggle" data-as-editor-control data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Font Style">
+														Style <span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu">
+														<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" data-as-editor-trigger-change>Heading 1</a></li>
+														<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" data-as-editor-trigger-change>Heading 2</a></li>
+														<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3" data-as-editor-trigger-change>Heading 3</a></li>
+														<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h4" data-as-editor-trigger-change>Heading 4</a></li>
+														<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="p" data-as-editor-trigger-change>Normal text</a></li>
+														<li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="blockquote" data-as-editor-trigger-change>Quote block</a></li>
+													</ul>
+												</div>
+												<div id="font-family" class="btn-group control control-separator">
+													<button type="button" class="btn btn-default dropdown-toggle" data-as-editor-control data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Font Type">
+														Font <span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu">
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Alegreya', serif" data-as-editor-trigger-change>Alegreya</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="Arial, Helvetica, sans-serif" data-as-editor-trigger-change>Arial</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Arial Black', Gadget, sans-serif" data-as-editor-trigger-change>Arial Black</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Amatic SC', cursive" data-as-editor-trigger-change>Amatic SC</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Bree Serif', serif" data-as-editor-trigger-change>Bree Serif</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Comic Sans MS', cursive, sans-serif" data-as-editor-trigger-change>Comic Sans MS</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Courier New', Courier, monospace" data-as-editor-trigger-change>Courier New</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="Georgia, serif" data-as-editor-trigger-change>Georgia</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="Impact, Charcoal, sans-serif" data-as-editor-trigger-change>Impact</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Lucida Console', Monaco, monospace" data-as-editor-trigger-change>Lucida Console</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Lucida Sans Unicode', 'Lucida Grande', sans-serif" data-as-editor-trigger-change>Lucida Sans Unicode</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Merriweather', serif" data-as-editor-trigger-change>Merriweather</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Palatino Linotype', 'Book Antiqua', Palatino, serif" data-as-editor-trigger-change>Palatino Linotype</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Permanent Marker', cursive" data-as-editor-trigger-change>Permanent Marker</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Pinyon Script', cursive" data-as-editor-trigger-change>Pinyon Script</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Playfair Display', serif" data-as-editor-trigger-change>Playfair Display</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Roboto', sans-serif" data-as-editor-trigger-change>Roboto</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Roboto Mono', monospace" data-as-editor-trigger-change>Roboto Mono</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="Tahoma, Geneva, sans-serif" data-as-editor-trigger-change>Tahoma</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Times New Roman', Times, serif" data-as-editor-trigger-change>Times New Roman</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Trebuchet MS', Helvetica, sans-serif" data-as-editor-trigger-change>Trebuchet MS</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Ultra', serif" data-as-editor-trigger-change>Ultra</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="'Varela Round', sans-serif" data-as-editor-trigger-change>Varela Round</a></li>
+														<li><a data-wysihtml5-command="fontFamily" data-wysihtml5-command-value="Verdana, Geneva, sans-serif" data-as-editor-trigger-change>Verdana</a></li>
+													</ul>
+												</div>
+												<div id="font-size" class="btn-group control control-separator">
+													<button type="button" class="btn btn-default dropdown-toggle" data-as-editor-control data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Font Size">
+														Size <span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu">
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="8px" data-as-editor-trigger-change>8</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="9px" data-as-editor-trigger-change>9</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="10px" data-as-editor-trigger-change>10</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="11px" data-as-editor-trigger-change>11</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="12px" data-as-editor-trigger-change>12</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="14px" data-as-editor-trigger-change>14</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="18px" data-as-editor-trigger-change>18</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="24px" data-as-editor-trigger-change>24</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="30px" data-as-editor-trigger-change>30</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="36px" data-as-editor-trigger-change>36</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="48px" data-as-editor-trigger-change>48</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="60px" data-as-editor-trigger-change>60</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="72px" data-as-editor-trigger-change>72</a></li>
+														<li><a data-wysihtml5-command="fontSizeStyle" data-wysihtml5-command-value="96px" data-as-editor-trigger-change>96</a></li>
+													</ul>
+												</div>
+												<div class="control">
+													<button id="bold" type="button" class="btn btn-default" data-wysihtml5-command="bold" data-as-editor-trigger-change data-as-tooltip title="Bold">
+														<span class="fa fa-bold" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button id="italic" type="button" class="btn btn-default" data-wysihtml5-command="italic" data-as-editor-trigger-change data-as-tooltip title="Italics">
+														<span class="fa fa-italic" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button id="underline" type="button" class="btn btn-default" data-wysihtml5-command="underline" data-as-editor-trigger-change data-as-tooltip title="Underline">
+														<span class="fa fa-underline" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div id="font-colour" class="btn-group control control-separator" data-as-colour-picker>
+													<button type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-wysihtml5-command="foreColorStyle" title="Font Color">
+														<span class="fa fa-font" aria-hidden="true"></span><span class="caret"></span>
+													</button>
+												    <div class="dropdown-menu" data-as-persist-dropdown>
+												    	<input type="text" id="as-colour-picker" data-as-colour-picker-control />
+												    	<div>
+													    	<a class="btn btn-primary" data-as-colour-picker-save="#document">OK</a>
+													    	<!-- <a class="btn btn-warning" data-as-colour-picker-close>Cancel</a> -->
+													    	<a class="btn btn-default" data-as-colour-picker-remove="#document">Clear</a>
+												    	</div>
+												    </div>
+												</div>
+												<div  class="btn-group control" data-as-toolbar-dialog>
+													<button type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-wysihtml5-command="createLink" title="Create Link">
+														<span class="fa fa-link" aria-hidden="true"></span>
+													</button>
+												    <div id="link-dialog" class="dropdown-menu" data-wysihtml5-dialog="createLink" data-as-link-dialog="#document">
+												    	<div class="url-field">
+												    		<input type="text" class="form-control" id="link-url" data-wysihtml5-dialog-field="href" value="http://" />
+												    	</div>
+												    	<div>
+													    	<a class="btn btn-primary" data-wysihtml5-dialog-action="save">OK</a>
+													    	<a class="btn btn-default" data-wysihtml5-dialog-action="cancel">Cancel</a>
+													    	<a class="btn btn-default remove-link"><span class="fa fa-unlink"></span></a>
+													    	<a class="go-to-link"><span class="fa fa-external-link"></span></a>
+												    	</div>
+												    </div>
+												</div>
+												<div  class="btn-group control" data-as-toolbar-dialog>
+													<button type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-wysihtml5-command="insertImage" title="Insert Image">
+														<span class="fa fa-file-image-o" aria-hidden="true"></span>
+													</button>
+												    <div id="image-dialog" class="dropdown-menu" data-as-persist-dropdown data-wysihtml5-dialog="insertImage">
+												    	<div class="url-field">
+												    		<input type="text" class="form-control" id="img-url" data-wysihtml5-dialog-field="src" data-ng-model="documentsCtrl.imgUrl" value="https://" />
+												    	</div>
+												    	<div>
+													    	<a class="btn btn-primary" data-wysihtml5-dialog-action="save">OK</a>
+												    		<a class="btn btn-default" data-as-show-images>Select Image</a>
+													    	<a class="btn btn-default" data-wysihtml5-dialog-action="cancel">Cancel</a>
+													    	<a class="btn btn-default" aria-haspopup="true" aria-expanded="false" data-ng-show="documentsCtrl.imgUrl && documentsCtrl.imgUrl.indexOf('cloudinary.com') != -1" data-ng-class="{'active': moreImage}" data-ng-click="moreImage = !moreImage">
+																<span class="fa fa-caret-down"></span>
+																<span class="sr-only">Toggle Dropdown</span>
+															</a>
+															<div id="more-image" data-ng-show="moreImage && documentsCtrl.imgUrl.indexOf('cloudinary.com') != -1">
+																<div>Resize:</div>
+																<div> 
+																	<select data-as-image-resize data-as-img-url="documentsCtrl.imgUrl" class="form-control">
+																		<option value="1">100%</option>
+																		<option value="0.9">90%</option>
+																		<option value="0.75">75%</option>
+																		<option value="0.66">66%</option>
+																		<option value="0.5">50%</option>
+																		<option value="0.33">33%</option>
+																		<option value="0.25">25%</option>
+																		<option value="0.1">10%</option>
+																	</select>
+																</div>
+															</div>
+												    	</div>
+												    </div>
+												</div>
+												<div class="control">
+													<button type="button" class="btn btn-default" data-as-comment-control="commentsCtrl" data-as-project-id="projectCtrl.projectId" data-as-document-id="documentsCtrl.documentId" data-as-tooltip title="Comment Highlighted Text">
+														<span class="fa fa-comment" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control control-separator">
+													<button type="button" class="btn btn-default" data-as-cardify data-as-project-id="projectCtrl.projectId" data-as-tooltip title="Convert Highlighted Text to Card">
+														<span class="fa fa-sticky-note" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button id="align-left" type="button" class="btn btn-default" data-wysihtml5-command="justifyLeft" data-as-editor-trigger-change data-as-tooltip title="Justify Left">
+														<span class="fa fa-align-left" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button id="align-center" type="button" class="btn btn-default" data-wysihtml5-command="justifyCenter" data-as-editor-trigger-change data-as-tooltip title="Justify Center">
+														<span class="fa fa-align-center" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control control-separator">
+													<button id="align-right" type="button" class="btn btn-default" data-wysihtml5-command="justifyRight" data-as-editor-trigger-change data-as-tooltip title="Justify Right">
+														<span class="fa fa-align-right" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button id="unordered-list" type="button" class="btn btn-default" data-wysihtml5-command="insertUnorderedList" data-as-editor-trigger-change data-as-tooltip title="Insert Unordered List">
+														<span class="fa fa-list-ul" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button id="ordered-list" type="button" class="btn btn-default" data-wysihtml5-command="insertOrderedList" data-as-editor-trigger-change data-as-tooltip title="Insert Ordered List">
+														<span class="fa fa-list-ol" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button type="button" class="btn btn-default" data-wysihtml5-command="outdent" data-as-editor-trigger-change data-as-tooltip title="Outdent">
+														<span class="fa fa-outdent" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control control-separator">
+													<button type="button" class="btn btn-default" data-wysihtml5-command="indent" data-as-editor-trigger-change data-as-tooltip title="Indent">
+														<span class="fa fa-indent" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button type="button" class="btn btn-default" data-wysihtml5-command="undo" data-as-editor-trigger-change data-as-tooltip title="Undo">
+														<span class="fa fa-undo" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control control-separator">
+													<button type="button" class="btn btn-default" data-wysihtml5-command="redo" data-as-editor-trigger-change data-as-tooltip title="Redo">
+														<span class="fa fa-repeat" aria-hidden="true"></span>
+													</button>
+												</div>
+												<div class="control">
+													<button id="removeFormat" type="button" class="btn btn-default" data-wysihtml5-command="clearFormat" data-as-editor-trigger-change data-as-tooltip title="Remove Formatting">
+														<span class="fa fa-eraser" aria-hidden="true"></span>
+													</button>
+												</div>
+											</div>
+										</div>
+										<div class="persistant-buttons">
+											<div id="more-controls" class="btn-group control as-dropdown">
+												<button type="button" class="btn btn-default" data-as-dropdown-open aria-haspopup="true" aria-expanded="false">
+													More <span class="caret"></span>
+												</button>
+											    <div class="hidden-controls dropdown-menu">
+											    	
+											    </div>
+											</div>
+											<div class="control">
+												<div id="autosave" data-ng-hide="documentCtrl.saving">
+													<span class="fa fa-check-circle" aria-hidden="true"></span> 
+													Saved
+												</div>
+												<div class="saving" data-ng-show="documentCtrl.saving" data-ng-cloak>
+													Saving
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="message" data-ng-show="documentCtrl.message && !documentCtrl.errorAction" data-ng-cloak>
+										{{!documentCtrl.message}}
+									</div>
+									<div class="message error" data-ng-show="documentCtrl.errorAction == 'revert'" data-ng-cloak>
+										<span class="fa fa-warning"></span> We were unable to retrieve your previously saved document, <a data-ng-click="documentCtrl.revert()">click here to revert to the last known good version</a>.
+									</div>
+									<div class="message error" data-ng-show="documentCtrl.errorAction == 'reload'" data-ng-cloak>
+										<span class="fa fa-warning"></span> {{!documentCtrl.message}} <a data-as-reload>reload this page</a>.
+									</div>
+								</div>	
+								<div id="toolbar-menu">
+									<div class="outline-control">
+										<input id="outliner-outline" type="checkbox" data-ng-click="documentsCtrl.changeType()" /><label for="outliner-outline"> Outline</label>
+									</div>
+									<div id="document-actions" class="btn-group control" data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 4)">
+										<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+											Actions <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu dropdown-menu-right">
+											<li><a data-as-merge-document-notes data-as-editor-trigger-change>Merge all cards</a></li>
+											<li><a data-ng-click="documentsCtrl.exportToGoogle()">Export to Google Docs</a></li>
+										</ul>
+									</div>
+									<div id="hide-header" class="control" data-ng-if="documentsCtrl.hideHeader" data-ng-click="documentsCtrl.hideHeader = !documentsCtrl.hideHeader">
+										<span class="fa fa-angle-double-down"></span>
+									</div>
+									<div id="hide-header" class="control" data-ng-if="!documentsCtrl.hideHeader" data-ng-click="documentsCtrl.hideHeader = !documentsCtrl.hideHeader">
+										<span class="fa fa-angle-double-up"></span>
+									</div>
+								</div>
+							</div>
+							<div id="workspace" class="container-fluid" data-ng-class="{'is-narrow': commentsCtrl.isNarrow}">
+								<div id="workspace-viewport" class="clearfix">
+									<div id="document" data-as-editor="toolbar" data-ng-show="documentsCtrl.documents.length > 0" data-ng-cloak data-as-comment-selection>
+										
+									</div>	
+									<div id="notifications" data-ng-show="documentsCtrl.documents.length > 0" data-ng-cloak class="clearfix">
+										<div class="notification" id="not-{{!parent.link}}" data-ng-repeat="parent in commentsCtrl.comments" data-ng-show="parent.found">
+											<div class="icon">
+												<span class="fa fa-comment" aria-hidden="true"></span> <span class="num">{{!parent.items.length}}</span>
+											</div>
+											<div class="display" data-ng-include="'notification.html'">
+											</div>
+										</div>
+										<div id="floating-comment">
+											<div class="fa fa-comment" aria-hidden="true" data-as-comment-control="commentsCtrl" data-as-project-id="projectCtrl.projectId" data-as-document-id="documentsCtrl.documentId"></div>
+										</div>
+									</div>
+									<div id="popup">
+									
+									</div>
+									<div class="dotted-line"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<script type="text/ng-template" id="notification.html">
+						<div class="notification-display" id="nd-{{!parent.link}}">
+							<div class="comment" data-ng-repeat="comment in parent.items | orderBy:'created'">
+								<span class="avatar"><img src="{{!usersCtrl.userLookup[comment.user_id].avatar}}?d=mm&s=30" /></span><span class="user-info" data-ng-if="usersCtrl.userLookup[comment.user_id]">{{!usersCtrl.userLookup[comment.user_id].first_name}} {{!usersCtrl.userLookup[comment.user_id].last_name}}, {{!commentsCtrl.timeSince(comment.created)}}</span>
+								<span data-ng-if="!usersCtrl.userLookup[comment.user_id]">Unknown, {{!commentsCtrl.timeSince(comment.created)}}</span>
+								<div class="body">
+									<p data-ng-if="!comment.edit && !comment.expand">{{!comment.content | limitTo : 100}}<span data-ng-if="comment.content.length > 100">... <a data-ng-click="commentsCtrl.toggleExpand(comment)">expand</a></span></p>
+									<p class="expanded" data-ng-if="!comment.edit && comment.expand">{{!comment.content}} <a data-ng-click="commentsCtrl.toggleExpand(comment)">collapse</a></p>
+									<form data-as-save-comment="comment" data-as-project-id="projectCtrl.projectId" data-as-document-id="documentsCtrl.documentId" data-as-comment-id="comment.id" data-as-request-id="commentsCtrl.requestId" data-ng-if="comment.edit">
+										<textarea autocomplete="off" data-ng-model="comment.content" class="form-control" placeholder="Type your comment..."></textarea>
+										<button class="btn btn-primary" type="submit">Send</button> <button type="button" data-ng-click="commentsCtrl.cancel(parent, comment)" class="btn btn-default">Cancel</button>
+									</form>
+								</div>
+							</div>
+							<div data-ng-if="parent.reply !== 1 && parent.reply !== -1 && siteCtrl.validatePermission(projectCtrl.projectId, 4)" class="controls">
+								<a data-ng-click="commentsCtrl.toggleReply(parent)">Reply</a> 
+								<div class="btn-group">
+									<a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										More...
+									</a>
+									<ul class="dropdown-menu">
+										<li><a data-ng-click="commentsCtrl.edit(parent)" data-ng-if="commentsCtrl.canEdit(parent)">Edit Last Comment</a></li>
+    									<li role="separator" class="divider" data-ng-if="commentsCtrl.canEdit(parent)"></li>
+										<li><a data-as-remove-comments data-as-comments-ctrl="commentsCtrl" data-as-link="parent.link">Delete Thread</a></li>
+									</ul>
+								</div>
+							</div>
+							<form class="reply" data-as-save-comment="parent" data-as-project-id="projectCtrl.projectId" data-as-document-id="documentsCtrl.documentId" data-as-comment-parent="parent" data-as-request-id="commentsCtrl.requestId" data-ng-if="parent.reply == 1 && siteCtrl.validatePermission(projectCtrl.projectId, 4)">
+								<textarea autocomplete="off" data-ng-model="parent.content" class="form-control" placeholder="Type your reply..."></textarea>
+								<button class="btn btn-primary" type="submit">Send</button> <button type="button" data-ng-click="commentsCtrl.toggleReply(parent)" class="btn btn-default">Cancel</button>
+							</form>
+						</div>
+					</script>
+					<div data-ng-controller="OutlinerCtrl as outlinerCtrl" data-ng-cloak data-ng-if="documentsCtrl.documentType == 'o'" class="viewport">
+						<div class="container-fluid" id="toolbar-container">
+							<div id="toolbar">
+								<div class="controls" data-ng-show="!outlinerCtrl.message && !outlinerCtrl.errorAction">
+									<div class="control" data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 4)">
+										<div id="autosave" data-ng-hide="outlinerCtrl.saving">
+											<span class="fa fa-check-circle" aria-hidden="true"></span> 
+											Saved
+										</div>
+										<div class="saving" data-ng-show="outlinerCtrl.saving" data-ng-cloak>
+											Saving
+										</div>
+									</div>
+									<div class="fill">
+									</div>
+								</div>
+								<div class="message" data-ng-show="outlinerCtrl.message && !outlinerCtrl.errorAction" data-ng-cloak>
+									{{!outlinerCtrl.message}}
+								</div>
+								<div class="message error" data-ng-show="outlinerCtrl.errorAction == 'revert'" data-ng-cloak>
+									<span class="fa fa-warning"></span> We were unable to retrieve your previously saved document, <a data-ng-click="outlinerCtrl.revert()">click here to revert to the last known good version</a>.
+								</div>
+								<div class="message error" data-ng-show="outlinerCtrl.errorAction == 'reload'" data-ng-cloak>
+									<span class="fa fa-warning"></span> {{!outlinerCtrl.message}} <a data-as-reload>reload this page</a>.
+								</div>
+							</div>	
+							<div id="toolbar-menu">
+								<div class="outline-control">
+									<input id="outliner-editor" type="checkbox" data-ng-click="documentsCtrl.changeType()" checked="checked" /><label for="outliner-editor"> Outline</label>
+								</div>
+								<div id="document-actions" class="btn-group control">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Actions <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right">
+										<li><a data-ng-click="outlinerCtrl.expand()">Expand all</a></li>
+										<li><a data-ng-click="outlinerCtrl.collapse()">Collapse all</a></li>
+										<li><a data-ng-click="documentsCtrl.exportToGoogle()" data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 4)">Export to Google Docs</a></li>
+									</ul>
+								</div>
+								<div id="hide-header" class="control" data-ng-if="documentsCtrl.hideHeader" data-ng-click="documentsCtrl.hideHeader = !documentsCtrl.hideHeader">
+									<span class="fa fa-angle-double-down"></span>
+								</div>
+								<div id="hide-header" class="control" data-ng-if="!documentsCtrl.hideHeader" data-ng-click="documentsCtrl.hideHeader = !documentsCtrl.hideHeader">
+									<span class="fa fa-angle-double-up"></span>
+								</div>
+							</div>
+						</div>
+						<div class="container-fluid" id="outliner">
+							<div id="outline" class="sort ng-cloak" data-ui-sortable="outlinerCtrl.options" data-ng-model="outlinerCtrl.outline">
+								<div id="item-{{!$index}}" data-ng-class="{modify: item[1].status == 'add' || item[1].status == 'edit', 'is-card': item[1].class && item[1].class.indexOf('as-editor-card') !== -1, 'is-image': item[1].ref && item[1].ref.indexOf('|i') !== -1 && !item[1].caption}" data-ng-repeat="item in outlinerCtrl.outline track by $index" data-as-outliner-item="item" data-as-outliner-ctrl="outlinerCtrl" data-as-site-ctrl="siteCtrl" data-as-project-id="projectCtrl.projectId" tabindex="0" data-as-tag="{{!item[0]}}" data-as-indent="{{!item[1]['data-as-indent']}}" data-as-hide-children={{!item[1].hidechildren}}>
+									<div class="outliner-caret" data-ng-class="outlinerCtrl.caretClazz(item)" data-as-outliner-caret data-as-toggle="item" data-as-outliner-ctrl="outlinerCtrl" data-as-site-ctrl="siteCtrl" data-as-project-id="projectCtrl.projectId"></div>
+									<span class="field">
+										<input type="text" data-ng-model="item[2]" data-as-modify-item="item" data-as-outliner-ctrl="outlinerCtrl" /> <button class="btn btn-primary">Done</button>
+										<span class="diminished">Ctrl+Enter to enter another headline, Tab or Shift+Tab for indents</span>
+									</span>
+									<span class="title" data-ng-bind-html="outlinerCtrl.renderTitle(item)">
+									</span>
+									<div class="controls" data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 4)"><a data-ng-click="outlinerCtrl.editItem(item)" class="edit"><span class="fa fa-pencil"></span></a> <a class="delete" data-ng-click="outlinerCtrl.removeItem(item)"><span class="fa fa-trash"></span></a></div>
+									<div id="{{!item.id}}" data-ng-hide="item.hide" data-ng-repeat="item in item.items track by $index" data-ng-include="'itemTree'" data-as-outliner-item="item" data-as-outliner-ctrl="outlinerCtrl" tabindex="0"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="document-tabs" class="container-fluid ng-cloak" data-ng-class="{scroll: documentsCtrl.documents.length > 3, 'scroll-left': documentsCtrl.documents[0].hide, 'scroll-right': documentsCtrl.documents[documentsCtrl.documents.length-1].hide}">
+						<a class="btn btn-default" id="scroll-left" data-ng-click="documentsCtrl.scrollLeft()"><span class="left-arrow"></span></a>
+						<div class="document" data-ng-class="document.clazz" data-ng-repeat="document in documentsCtrl.documents" data-ng-if="!document.hide" data-as-tooltip data-as-title="{{!document.title}}">
+							<div class="clickable" data-ng-click="documentsCtrl.getDocument(document, true)" data-as-edit-document-title="document" data-as-site-ctrl="siteCtrl" data-as-project-id="projectCtrl.projectId" data-ng-show="document.action == 'view'">
+								<span>{{!document.title}}</span>
+								
+								<div class="btn-group dropup" data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 4)">
+									<a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<img src="{{static_url('images/dropdown-arrow.svg')}}" />
+									</a>
+									<ul class="dropdown-menu">
+										<li><a data-as-delete-document-confirm data-as-from="document" data-as-set="documentsCtrl.deletedocument">Delete</a></li>
+    									<li role="separator" class="divider"></li>
+										<li><a data-as-edit-document-title="document">Edit</a></li>
+									</ul>
+								</div>
+							</div>
+							<div data-ng-show="document.action == 'edit'">
+								<form data-as-save-document-title="document" data-as-documents="documentsCtrl.documents" data-as-request-id="documentsCtrl.requestId">
+									<input type="text" id="{{!document.id}}" data-ng-required data-ng-model="document.title" class="edit-title" />
+								</form>
+							</div>
+							<div data-ng-show="document.action == 'create'">
+								<form data-as-save-document-title="document" data-as-documents="documentsCtrl.documents" data-as-request-id="documentsCtrl.requestId">
+									<input type="text" id="{{!document.id}}" data-ng-required data-ng-model="document.title" class="create-title" />
+								</form>
+							</div>
+						</div>
+						<a class="btn btn-default" id="scroll-right" data-ng-click="documentsCtrl.scrollRight()"><span class="right-arrow"></span></a>
+						<div id="add-document" data-as-create-document-title data-as-documents="documentsCtrl.documents" data-as-project-id="projectCtrl.projectId" data-ng-if="siteCtrl.validatePermission(projectCtrl.projectId, 4)">
+							<img src="{{static_url('images/add-icon.svg')}}" />
+						</div>
+						<div class="modal fade" id="confirm-document-modal" tabindex="-1" role="dialog" aria-labelledby="confirmDocumentModalLabel" data-as-open-modal-event="document:delete:request">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+										<h4 class="modal-title" id="confirmDocumentModalLabel">Delete Document</h4>
+									</div>
+									<div class="modal-body">
+										<p>
+											Are you sure you wish to delete this document? This action cannot be undone. All data related to this document (including comments) and all other users access to it will be lost and cannot be recovered.
+										</p>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+										<button type="button" class="btn btn-primary" data-dismiss="modal" data-as-delete-document="documentsCtrl.deletedocument" data-as-document-id="documentsCtrl.documentId">Yes, I am sure</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div data-as-splitter-panel="right">
+					<div data-ng-view></div>
+				</div>
+				<div id="tabs" class="as-splitter-handle">
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="edit-project-modal" tabindex="-1" role="dialog" aria-labelledby="editProjectModalLabel">
+			<div class="modal-dialog project-dialog" role="document">
+				<div class="modal-content">
+					<form name="editProject" novalidate>
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="editProjectModalLabel">Edit Project</h4>
+						</div>
+						<div class="modal-body">
+							<input class="form-control project-title" data-ng-model="projectCtrl.project.title" placeholder="Title" data-ng-required="true" />
+		  					<textarea class="form-control project-description" rows="5" data-ng-model="projectCtrl.project.description" data-ng-required="true" placeholder="Add short summary..."></textarea>
+		  					<span class="control-label">Deadline:</span>
+							<div class="input-image-right">
+	                            <input type="text" id="deadline" class="form-control" autocomplete="off" data-as-date-picker placeholder="yyyy-mm-dd" data-ng-model="projectCtrl.project.deadline">
+	                            <label for="deadline"><span class="fa fa-calendar" aria-hidden="true"></span></label>
+	                        </div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary submit" data-ng-disabled="editProject.$invalid" data-as-edit-project="projectCtrl.project">Save Project</button>
+	                        <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+	
+							<div class="btn-group note-menu pull-right">
+								<a class="note-cog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<span class="fa fa-cog" aria-hidden="true"></span>
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<button class="btn btn-link" data-as-archive-project="projectCtrl.project" data-ng-if="projectCtrl.project.status !== 'archive'">
+											<span class="fa fa-external-link" aria-hidden="true"></span> Archive Project
+										</button>
+									</li>
+									<li>
+										<button class="btn btn-link" data-as-unarchive-project="projectCtrl.project" data-ng-if="projectCtrl.project.status === 'archive'">
+											<span class="fa fa-external-link" aria-hidden="true"></span> Reinstate Project
+										</button>
+									</li>
+									<li role="separator" class="divider"></li>
+									<li>
+										<button class="btn btn-link" data-dismiss="modal" data-toggle="modal" data-target="#confirm-project-modal">
+											<span class="fa fa-times-circle-o" aria-hidden="true"></span> Delete Project
+										</button>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="confirm-project-modal" tabindex="-1" role="dialog" aria-labelledby="confirmProjectModalLabel">
+			<div class="modal-dialog project-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="confirmProjectModalLabel">Delete Project</h4>
+					</div>
+					<div class="modal-body">
+						<p>
+							Are you sure you wish to delete this project? This action cannot be undone. All data under this project (including documents, notes, comments, etc) and all other users access to it will be lost and cannot be recovered.
+						</p>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary submit" data-as-delete-project="projectCtrl.project">Yes, I am sure</button>
+                        <button type="button" class="btn btn-default cancel" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="add-user-modal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form data-ng-submit="usersCtrl.addUserToProject()" name="addUser" novalidate>
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="addUserModalLabel">Send Invitation for {{!projectCtrl.project.title}}</h4>
+						</div>
+						<div class="modal-body">
+							<input type="email" class="form-control email" data-ng-model="usersCtrl.invitation.email" placeholder="Email" data-ng-required="true"  />
+		  					<textarea class="form-control message" rows="5" data-ng-model="usersCtrl.invitation.message" data-ng-required="true">Join us, its bliss</textarea>
+							<div class="select">
+								<span class="plain-select">
+									<select class="permissions" data-ng-model="usersCtrl.invitation.permissions">
+										<option value="view-all">Can View</option>
+										<option value="cards">Can add cards &amp; images</option>
+										<option value="edit-all">Can edit</option>
+										<option value="admin">Make an administrator</option>
+									</select>
+								</span>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary submit" data-ng-disabled="addUser.$invalid">Send Invitation</button>
+                            <button type="button" class="btn btn-default cancel" data-dismiss="modal">Close</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="manage-user-modal" tabindex="-1" role="dialog" aria-labelledby="manageUserModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form>
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="manageUserModalLabel">Manage Users</h4>
+						</div>
+						<div class="modal-body">
+							<div data-ng-repeat="user in usersCtrl.users" class="user">
+								<!--<input type="checkbox" data-ng-checked="usersCtrl.userExists(user)" data-ng-click="usersCtrl.toggleUserSelection(user)" />-->
+                                <div class="avatar">
+                                    <img src="{{!usersCtrl.userLookup[user.id].avatar}}?d=mm&s=30" />
+                                </div>
+                                <span>{{!user.first_name}} {{!user.last_name}}</span>
+
+                                <div class="actions pull-right dropdown">
+                             		<div data-ng-if="usersCtrl.userId !== user.id">
+	                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                                        {{!usersCtrl.getPermissionsString(user.permissions)}}
+	                                        <img src="{{static_url('images/dropdown-arrow.svg')}}" />
+	                                        <span class="sr-only">Toggle Dropdown</span>
+	                                    </button>
+	                                    <ul class="dropdown-menu dropdown-menu-right">
+	                                        <li><a data-ng-click="user.permissions='view-all';">Can View</a></li>
+	                                        <li><a data-ng-click="user.permissions='cards';">Can add cards & images</a></li>
+	                                        <li><a data-ng-click="user.permissions='edit-all';">Can edit</a></li>
+	                                        <hr>
+	                                        <li><a data-ng-click="user.permissions='admin';">Make an administrator</a></li>
+	                                        <li><a data-ng-click="usersCtrl.removeUser(user);">Remove user</a></li>
+	                                    </ul>
+                                    </div>
+                                    <div data-ng-if="usersCtrl.userId === user.id">
+                                    	{{!usersCtrl.getPermissionsString(user.permissions)}}
+                                    </div>
+                                </div>
+                            </div>
+                            <a class="invite-new-user" data-toggle="modal" data-target="#add-user-modal" data-ng-click="usersCtrl.hideManageUserModal(); usersCtrl.populateInvitation()">Invite new users...</a>
+                            <div data-ng-if="usersCtrl.invitations.length">
+	                            <h4>Pending Invitations</h4>
+	                            <div data-ng-repeat="invitation in usersCtrl.invitations" class="user pending-invitation">
+	                                <!--<input type="checkbox" data-ng-checked="usersCtrl.invitationExists(invitation)" data-ng-click="usersCtrl.toggleInvitationSelection(invitation)" /> {{!invitation.email}}-->
+	                                <!--<div class="avatar">-->
+	                                    <!--<img src="{{!usersCtrl.userLookup[user.id].avatar}}?d=mm&s=30" />-->
+	                                <!--</div>-->
+	                                <span class="email">{{!invitation.email}}</span>
+	
+	                                <div class="actions pull-right ">
+	                                    <a class="invitation-remove" data-ng-click="usersCtrl.removeInvitation(invitation);">Remove</a>
+	                                </div>
+	                            </div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary submit" data-ng-click="usersCtrl.updatePermissions();">Save</button>
+						    <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="confirm-users-modal" tabindex="-1" role="dialog" aria-labelledby="confirmUserModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="confirmUserModalLabel">Remove Users</h4>
+					</div>
+
+					<div class="modal-body">
+						<p>
+							Are you sure you wish to remove the selected user(s)? This action cannot be undone, though you can always invite the user back! 
+						</p>
+						<p>
+							Please note: if you are the last person in this project and you are removing yourself, all data under this project (including documents, notes, comments, etc) will be lost and cannot be recovered.
+						</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary submit" data-dismiss="modal" data-ng-disabled="!usersCtrl.selectedUsers.length" data-ng-click="usersCtrl.removeUsers()">Yes, I am sure</button>
+                        <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="confirm-invitations-modal" tabindex="-1" role="dialog" aria-labelledby="confirmInvitationsModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="confirmInvitationsModalLabel">Pending Invitations</h4>
+					</div>
+					<div class="modal-body">
+						Are you sure you wish to delete the selected invitation(s)? This action cannot be undone.
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary submit" data-dismiss="modal" data-ng-disabled="!usersCtrl.selectedInvitations.length" data-ng-click="usersCtrl.removeInvitations()">Yes, I am sure</button>
+                        <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

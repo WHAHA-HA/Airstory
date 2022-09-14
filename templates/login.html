@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="asApp" data-ng-controller="LoginCtrl">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/account.min.css')}}">
+</head>
+<body>
+	{% include "include/tags.html" %}
+	{% include "include/nav.html" %}
+	<div id="viewport">
+		<div id="title">
+			Login
+		</div>
+		<div id="login">
+			<div class="alert alert-danger ng-cloak" role="alert" data-ng-show="msg">{{!msg}}</div>
+			<form name="loginUser" data-ng-submit="login()" novalidate>
+				<input type="email" class="form-control" placeholder="Email" data-ng-model="email" data-ng-required="true" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+				<input type="password" class="form-control" placeholder="Password" data-ng-model="password" data-ng-required="true" autocomplete="off" />
+				<button type="submit" data-ng-disabled="loginUser.$invalid" class="btn btn-primary">Login</button>
+				<a href="/create" id="create-account" data-as-add-query-to-link>Create Account</a>
+				<a href="/forgot" id="forgot-password" data-as-add-query-to-link>Forgot Password?</a>
+			</form>
+		</div>
+	</div>
+
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

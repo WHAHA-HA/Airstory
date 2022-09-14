@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="asApp" data-ng-controller="SiteCtrl as siteCtrl">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/account.min.css')}}">
+</head>
+<body data-ng-controller="AccountCtrl">
+	{% include "include/tags.html" %}
+	<div>
+		<div id="splitter-viewport">
+			<div data-as-splitter>
+				{% include "include/nav.html" %}
+				<div id="project" data-as-splitter-panel="left">
+					<div id="viewport">
+						<div id="title">
+							Downloads
+						</div>
+						<div id="account">
+							<a href="/static/site/AirstoryResearcher.crx">Airstory Researcher (Chrome Extension)</a>
+							
+							<h3>How to install:</h3>
+							<ol>
+								<li>Click on the link above to download AirstoryResearcher.crx. Installation will be blocked, that is to be expected, the CRX will still be downloaded to your Downloads folder.</li>
+								<li>In the top right of the Chrome browser, click the Chrome Menu <img src="{{static_url('images/chrome-menu.png')}}" />. Select "Settings" then click on "Extensions"
+								<li>Drag and drop the CRX file onto the Chrome Extensions page to install it. You'll be prompted to confirm installation of the extension, just as if you had installed it from the Chrome Web Store.</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<div data-as-splitter-panel="right">
+					<div data-ng-view></div>
+				</div>
+				<div id="tabs" class="as-splitter-handle">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

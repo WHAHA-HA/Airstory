@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="asApp" data-ng-controller="SiteCtrl as siteCtrl">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/projects.min.css')}}">
+</head>
+<body data-ng-controller="ProjectsCtrl as projectsCtrl">
+	{% include "include/tags.html" %}
+	<div id="splitter-viewport">
+		<div data-as-splitter class="table-responsive">
+			{% include "include/nav.html" %}
+			<div id="projects" data-as-splitter-panel="left">
+                <div>
+                    <div id="title">
+                        My Projects
+                    </div>
+                    <div class="controls">
+                        <div class="archived-projects">
+                            <a class="link" data-ng-click="projectsCtrl.showArchived = !projectsCtrl.showArchived" data-ng-if="projectsCtrl.hasArchivedProjects()">Show Archived Projects</a>
+                        </div>
+                        <div class="new-project">
+                            <button type="button" class="btn" data-toggle="modal" data-target="#add-project-modal">
+                                Add New Project
+                            </button>
+                        </div>
+                    </div>
+                </div>
+				<div id="project-controls">
+					<div class="search">
+						<form>
+							<div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-search" aria-hidden="true"></span></span>
+
+                                    <input type="text" data-as-search-projects class="form-control" id="searchProjects"
+                                        placeholder="Search projects by text or author…" autocomplete="off">
+                                    <span class="fa fa-times-circle-o searchclear" data-as-clear-field="#searchProjects"></span>
+
+                                </div>
+                            </div>
+                            <div class="select">
+                                <span class="sort-option">Sort by</span>
+								 <span class="plain-select">
+                                    <select data-ng-change="projectsCtrl.setSortBy()" data-ng-model="projectsCtrl.sortBy">
+                                        <option value="updated">Recent</option>
+                                        <option value="title">Project Name</option>
+                                        <option value="first_name">Author</option>
+                                    </select>
+                                </span>
+                            </div>
+
+						</form>
+					</div>
+				</div>
+				<div class="cards" data-ng-cloak>
+					<div class="card" data-ng-repeat="project in siteCtrl.projects | orderBy : projectsCtrl.sortBy : projectsCtrl.sortReversed" id="{{!project.id}}" data-as-go-to-project="project.id" data-ng-if="project.status !== 'archive' || projectsCtrl.showArchived" data-ng-class="{archived: project.status === 'archive'}">
+						<div data-ng-if="siteCtrl.validatePermission(project.id, 5)" class="cog" data-target="#edit-project-modal" data-as-populate-and-open data-as-from="project" data-as-set="projectsCtrl.editproject">
+							<span class="fa fa-cog" aria-hidden="true"></span>
+						</div>
+						<span class="avatar">
+							<img data-ng-src="{{!project.avatar}}?d=mm&s=30" />
+						</span>
+						<span class="user-info">{{!project.first_name}} {{!project.last_name}}</span>
+						<div class="title"><span data-ng-cloak data-ng-if="project.status == 'delete'">Deleting: </span>{{!project.title}}</div>
+						<div class="body">{{!project.description}}</div>
+						<div class="deadline" data-ng-if="project.deadline">{{!projectsCtrl.displayDeadline(project.deadline)}}</div>
+					</div>
+				</div>
+	
+			</div>
+			<div data-as-splitter-panel="right" data-ng-controller="CitationsCtrl as citationsCtrl">
+				<div data-ng-view></div>
+			</div>
+			<div id="tabs" class="as-splitter-handle">
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="edit-project-modal" tabindex="-1" role="dialog" aria-labelledby="editProjectModalLabel">
+		<div class="modal-dialog project-dialog" role="document">
+			<div class="modal-content">
+				<form name="editProject" novalidate>
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="editProjectModalLabel">Edit Project</h4>
+					</div>
+
+					<div class="modal-body">
+						<input class="form-control project-title" data-ng-model="projectsCtrl.editproject.title" placeholder="Title" data-ng-required="true" />
+						<textarea class="form-control project-description" rows="5" data-ng-model="projectsCtrl.editproject.description" data-ng-required="true" placeholder="Add short summary..."></textarea>
+						<span class="control-label">Deadline:</span>
+						<div class="input-image-right">
+                            <input type="text" id="deadline" class="form-control" autocomplete="off" data-as-date-picker placeholder="yyyy-mm-dd" data-ng-model="projectsCtrl.editproject.deadline">
+                            <label for="deadline"><span class="fa fa-calendar" aria-hidden="true"></span></label>
+                        </div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary submit" data-ng-disabled="editProject.$invalid" data-as-edit-project="projectsCtrl.editproject">Save Project</button>
+                        <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+
+						<div class="btn-group note-menu pull-right">
+							<a class="project-cog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="fa fa-cog" aria-hidden="true"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<button class="btn btn-link" data-as-archive-project="projectsCtrl.editproject" data-ng-if="projectsCtrl.editproject.status !== 'archive'">
+										<span class="fa fa-external-link" aria-hidden="true"></span> Archive Project
+									</button>
+								</li>
+								<li>
+									<button class="btn btn-link" data-as-unarchive-project="projectsCtrl.editproject" data-ng-if="projectsCtrl.editproject.status === 'archive'">
+										<span class="fa fa-external-link" aria-hidden="true"></span> Reinstate Project
+									</button>
+								</li>
+								<li role="separator" class="divider"></li>
+								<li>
+									<button class="btn btn-link" data-dismiss="modal" data-toggle="modal" data-target="#confirm-project-modal">
+										<span class="fa fa-times-circle-o" aria-hidden="true"></span> Delete Project
+									</button>
+								</li>
+							</ul>
+						</div>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="confirm-project-modal" tabindex="-1" role="dialog" aria-labelledby="confirmProjectModalLabel">
+		<div class="modal-dialog project-dialog" role="document">
+			<div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="confirmProjectModalLabel">Delete Project</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Are you sure you wish to delete this project? This action cannot be undone. All data under this project (including documents, notes, comments, etc) and all other users access to it will be lost and cannot be recovered.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary submit" data-dismiss="modal" data-as-delete-project="projectsCtrl.editproject">Yes, I am sure</button>
+                    <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

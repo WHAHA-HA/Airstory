@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="asApp" data-ng-controller="SiteCtrl as siteCtrl">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/account.min.css')}}">
+</head>
+<body data-ng-controller="AccountCtrl">
+	{% include "include/tags.html" %}
+	<div>
+		<div id="splitter-viewport">
+			<div data-as-splitter>
+				{% include "include/nav.html" %}
+				<div id="project" data-as-splitter-panel="left">
+					<div id="viewport">
+						<div id="title">
+							My Projects
+						</div>
+						<div id="account">
+							<div data-ng-class="clazz" data-ng-cloak role="alert" data-ng-show="msg">{{!msg}}</div>
+							<div data-ng-hide="edit == 'account'" data-ng-cloak>
+								<strong>Email:</strong> {{!user.email}} <a data-ng-click="edit = 'account'">edit</a><br />
+								<strong>First Name:</strong> {{!user.first_name}}<br />
+								<strong>Last Name:</strong> {{!user.last_name}}
+							</div>
+							<form name="account" data-ng-submit="updateAccount()" novalidate data-ng-show="edit == 'account'" data-ng-cloak>
+								<input type="email" class="form-control" placeholder="Email" data-ng-model="user.email" data-ng-required="true" />
+								<input type="text" class="form-control" placeholder="First Name" data-ng-model="user.first_name" data-ng-required="true" />
+								<input type="text" class="form-control" placeholder="Last Name" data-ng-model="user.last_name" data-ng-required="true" />
+								<button type="submit" data-ng-disabled="account.$invalid" class="btn btn-primary">Save</button>
+								<button type="button" class="btn btn-default cancel" data-ng-click="edit = ''">Cancel</button>
+							</form>
+							<div data-ng-hide="edit == 'password'" data-ng-cloak>
+								<strong>Password:</strong> ****** <a data-ng-click="edit = 'password'">edit</a>
+							</div>
+							<form name="password" data-ng-submit="updatePassword()" novalidate data-ng-show="edit == 'password'" data-ng-cloak>
+								<input type="password" class="form-control" placeholder="New Password" data-ng-model="user.password" data-ng-required="true" autocomplete="off" />
+								<input data-ng-class="{'error': password.confirm.$error.match}" type="password" class="form-control" placeholder="Confirm Password" data-ng-model="user.confirmPassword" name="confirm" data-ng-required="true" data-match="user.password" autocomplete="off" />
+								<button type="submit" data-ng-disabled="password.$invalid" class="btn btn-primary">Change Password</button>
+								<button type="button" class="btn btn-default cancel" data-ng-click="edit = ''">Cancel</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div data-as-splitter-panel="right">
+					<div data-ng-view></div>
+				</div>
+				<div id="tabs" class="as-splitter-handle">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="grayout" data-ng-cloak data-ng-show="processing">
+	</div>
+	<img data-ng-show="processing" data-ng-cloak class="wait" src="{{static_url('images/spinner.gif')}}" />
+
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+#airstory {
+	padding: 6px 5px 8px;
+	display: inline-block;
+}
+
+#title {
+	font-size: 14px;
+	color: #000000;
+	padding: 17px 0 16px 20px;
+	font-weight: bold;
+}
+
+.control-label {
+	color: #979797;
+	padding-left: 5px;
+	font-size: 13px;
+}
+
+html {
+	height: 100vh;
+}
+
+body {
+	height: 100vh;
+	background: #FFFFFF;
+}
+
+#tabs {
+    height: 100vh;
+    width: 6px;
+    background: #FFFFFF;
+    cursor: col-resize;
+    border-left: 1px solid #F5F5F5;
+    border-right: 1px solid #F5F5F5;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+#site-nav {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	z-index: 100;
+	width: 50px;
+	font-size: 18px;
+	white-space: nowrap;
+	overflow: hidden;
+	background: #A161A4;
+    background: linear-gradient(#A161A4, #386CB2); /* Standard syntax */
+}
+
+#site-nav ul {
+	margin: 0px;
+    list-style: none;
+    padding: 0px;
+}
+
+#site-nav ul.bottom {
+    bottom: 20px;
+    position: absolute;
+}
+
+#site-nav li {
+	padding: 19px 0px 0px 11px;
+}
+
+#site-nav li img {
+	margin-right: 11px;
+	vertical-align: bottom;
+	width: 28px;
+}
+
+#site-nav li svg {
+    vertical-align: bottom;
+}
+
+#site-nav li a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#site-nav li a:not(.link) {
+    text-decoration: none;
+	font-size: 14px;
+	color: #FFFFFF;
+}
+
+#site-nav .link {
+    text-decoration: underline;
+	font-size: 12px;
+	color: #FFFFFF;
+	margin-left: 8px;
+}
+
+#site-nav svg {
+    position: relative;
+    bottom: -2px;
+}
+
+#site-nav li a:not(.link):hover {
+    text-decoration: none;
+}
+
+#site-nav li a:not(.link):active,
+#site-nav li a:not(.link):focus {
+    text-decoration: none;
+}
+
+#list-projects {
+	padding-top: 11px !important;
+}
+
+#list-projects li {
+	display: block;
+	opacity: 0.69;
+	font-size: 12px;
+	color: #FFFFFF;
+	line-height: 22px;
+	padding: 0px;
+}
+
+#list-projects a {
+	display: block;
+}
+
+a.indent {
+	padding-left: 43px;
+}
+
+
+.project-dialog input.project-title {
+    margin-bottom: 10px;
+    border-radius: 0;
+    height: 30px;
+    font-size: 12px;
+}
+
+.project-dialog .modal-footer {
+    padding-top: 0px;
+}
+
+.project-dialog .modal-footer .note-menu {
+    float: right;
+}
+
+.project-dialog textarea.project-description {
+	margin-bottom: 10px;
+	border-radius: 0px;
+}
+
+.input-image-right {
+	position: relative;
+}
+
+.input-image-right input {
+	border-radius: 0;
+	box-shadow: none;
+	outline: none;
+}
+
+.input-image-right label {
+	position: absolute;
+	right: 10px;
+	top: 6px;
+	color: #60bb98;
+	font-size: 18px;
+}
+
+.avatar img {
+	border-radius: 50%;
+}
+
+.user-info {
+	padding-top: 6px;
+	padding-left: 5px;
+	color: #7B7B7B;
+}
+
+ /*updating common stylesheets*/
+
+.modal-content {
+    border-radius: 0px;
+    box-shadow: none;
+}
+
+
+
+.modal-header {
+    padding: 12px 17px 12px 30px;
+}
+
+.btn {
+    padding-left: 22px;
+    padding-right: 22px;
+}
+
+.form-control {
+    box-shadow: none;
+}
+
+.modal-header .close {
+    margin-top: 0px;
+}
+.modal-header button.close span{
+    font-size: 28px;
+}
+
+.modal-footer {
+    border-top: 0px;
+    text-align: left;
+    padding: 0px 30px 30px;
+}
+
+.modal-footer button.btn {
+    height: 40px;
+    border-radius: 3px;
+    border: 0px;
+}
+
+.modal-footer button.submit {
+    background-color: #60bb98 !important;
+    border-color: #60bb98 !important;
+}
+
+.modal-footer button.cancel {
+    color: #FFFFFF !important;
+    background-color: #9b9b9b !important;
+    border-color: #9b9b9b !important;
+}
+
+.modal-body {
+    padding-top: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+input.project-title {
+    margin-bottom: 10px;
+    border-radius: 0;
+    height: 30px;
+    font-size: 12px;
+}
+
+textarea.project-description {
+	margin-bottom: 19px;
+    border-radius: 0px;
+}
+
+#add-project-modal button[type="submit"] img {
+	border-radius: 50%;
+}
+
+#edit-project-modal .btn-danger {
+	margin-top: 10px;
+}
+
+.project-dialog .modal-footer {
+    border-top: 0px;
+    text-align: left;
+    padding-top: 0px;
+}
+
+.project-dialog .modal-footer .note-menu {
+    float: right;
+}
+
+.project-dialog .modal-footer button.btn {
+    height: 40px;
+    border-radius: 3px;
+    border: 0px;
+}

@@ -1,0 +1,38 @@
+<div class="popup add-note">
+	<div class="btn-group btn-group-xs" role="group">
+		<button type="button" class="btn btn-default active note">Note</button>
+		<button type="button" class="btn btn-default citation">Citation</button>
+	</div>
+    <div id="notification" class="alert alert-success"></div>
+	<form>
+		<div id="note">
+			<select class="form-control" id="library">
+			{% for project in projects %}
+				<option value="{{project.id}}">{{project.title}}</option>
+     		{% end %}
+     		</select>
+			<input type="text" id="title" class="form-control" placeholder="Title (optional)" />
+			<div id="content" class="form-control" data-placeholder="Type note content here or select content on a web page..."></div>
+			<div id="toolbar">
+				<button type="button" class="btn btn-default" data-wysihtml5-command="bold">
+					<span class="fa fa-bold" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-default" data-wysihtml5-command="italic">
+					<span class="fa fa-italic" aria-hidden="true"></span>
+				</button>
+				<button type="button" class="btn btn-default" data-wysihtml5-command="underline">
+					<span class="fa fa-underline" aria-hidden="true"></span>
+				</button>
+			</div>
+		</div>
+		<div id="citation">
+			<input type="text" id="article_title" class="form-control" placeholder="Article Title" />
+			<input type="text" id="page_title" class="form-control" placeholder="Website Title" />
+			<input type="text" id="url" class="form-control" placeholder="URL" />
+			<input type="text" id="author" class="form-control" placeholder="Author" />
+			<input type="text" id="publication_date" class="form-control" placeholder="Publication Date" />
+		</div>
+		<a id="logout">logout</a>
+		<button type="submit" class="webclip btn btn-primary">Create the Note</button>
+	</form>
+</div>

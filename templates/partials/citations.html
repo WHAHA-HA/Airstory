@@ -1,0 +1,57 @@
+<div id="source-panel">
+	<div id="source-tabs" class="clearfix">
+		<div class="document-mobile" data-as-scroll-to-document>
+			<span class="fa fa-edit" aria-hidden="true"></span>
+		</div>
+		<div class="fullsize" data-as-splitter-full-size>
+			<img src="{{static_url('images/fullsize.png')}}" />
+		</div>
+	</div>
+	
+	<div id="citations">
+		<div class="cards">
+			<div class="cards-container clearfix">
+				<div class="card" data-ng-show="citation.position" data-ng-class="citation.clazz" data-as-ref-id="{{!citation.ref_id}}" data-as-id="{{!citation.id}}" data-as-show-citation-in-document="citation" data-ng-repeat="citation in citationsCtrl.documentcitations | orderBy:'position'">
+						<div class="number">{{!citation.position}}.</div>
+						<div class="details">
+							<div data-ng-if="citation.article_title"><strong>Article Title:</strong> {{!citation.article_title}}</div>
+							<div data-ng-if="citation.page_title"><strong>Page Title:</strong> {{!citation.page_title}}</div>
+							<div data-ng-if="citation.url"><strong>URL:</strong> {{!citation.url}}</div>
+							<div data-ng-if="citation.author"><strong>Author:</strong> {{!citation.author}}</div>
+							<div data-ng-if="citation.publication_date"><strong>Publication Date:</strong> {{!citation.publication_date}}</div>
+						</div>
+						<div class="options">
+							<span class="fa fa-edit" aria-hidden="true" data-target="#edit-citation-modal" data-as-populate-and-open data-as-from="citation" data-as-set="citationsCtrl.editcitation"></span>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="edit-citation-modal" tabindex="-1" role="dialog" aria-labelledby="editCitationModalLabel" data-as-modal>
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form name="editCitation" novalidate>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="editCitationModalLabel">Edit Citation</h4>
+				</div>
+				<div class="modal-body">
+					<input type="text" data-ng-model="citationsCtrl.editcitation.article_title" class="form-control" placeholder="Article Title" />
+					<input type="text" data-ng-model="citationsCtrl.editcitation.page_title" class="form-control" placeholder="Website Title" />
+					<input type="text" data-ng-model="citationsCtrl.editcitation.url" class="form-control" placeholder="URL" />
+					<input type="text" data-ng-model="citationsCtrl.editcitation.author" class="form-control" placeholder="Author" />
+					<input type="text" data-ng-model="citationsCtrl.editcitation.publication_date" class="form-control" placeholder="Publication Date" />
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary" data-ng-disabled="editCitation.$invalid" data-as-edit-citation="citationsCtrl.editcitation">Update this Citation</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

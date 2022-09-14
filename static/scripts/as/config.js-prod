@@ -1,0 +1,10 @@
+app.constant('splitterLeftPanelMinWidth', 645);
+app.constant('splitterRightPanelMinWidth', 470);
+app.constant('webSocketUrl', '/websocket');
+
+app.config(['$compileProvider', function ($compileProvider) {
+  $compileProvider.debugInfoEnabled(false);
+}]);
+
+$.cloudinary.config({ cloud_name: 'airstory', api_key: '575153598828167'});
+app.constant('cloudinaryFolder', '/prod');

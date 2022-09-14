@@ -1,0 +1,189 @@
+<div id="source-panel" data-as-file-drop data-as-loading="imagesCtrl.loading">
+	<div>
+		<div class="document-mobile" data-as-scroll-to-document>
+			<span class="fa fa-edit" aria-hidden="true"></span>
+		</div>
+		<div id="title">
+			Image Library
+		</div>
+		<div class="controls">
+			<div class="add" data-ng-if="!projectCtrl || imagesCtrl.type === 'user' || siteCtrl.validatePermission(projectCtrl.projectId, 3)">
+				<form method="post" action="{{!'/v1/images/' + imagesCtrl.refId}}" enctype="multipart/form-data" data-as-uploader data-as-loading="imagesCtrl.loading">
+				  	<input type="file" name="files" id="file" data-multiple-caption="{count} files" multiple />
+					<label for="file"><img src="{{static_url('images/add-icon.svg')}}" /></label>
+				</form>
+			</div>
+			<!-- <div class="settings">
+				<img src="{{static_url('images/settings-icon.svg')}}" />
+			</div> -->
+			<div class="fullsize" data-as-splitter-full-size>
+				<img src="{{static_url('images/expand-icon.svg')}}" />
+			</div>
+			<div class="closeit" data-as-splitter-close>
+				<img src="{{static_url('images/close-icon.svg')}}" />
+			</div>
+		</div>
+	</div>
+	<div>
+		<div id="drawer">
+			<div id="image-loading" data-ng-class="imagesCtrl.loading.clazz">
+				<div>
+					<img src="{{static_url('images/hourglass.gif')}}">
+				</div>
+				<div class="msg">
+					{{!imagesCtrl.loading.msg}}
+				</div>
+				<div>
+					<span id="close-loading-msg" class="fa fa-times-circle-o" data-ng-click="imagesCtrl.loading.clazz = []"></span>
+				</div>
+			</div>
+			<div class="drawer-controls">
+				<div class="select">
+					<span class="plain-select">
+						<select data-ng-model="imagesCtrl.select" data-as-drawer-display="imagesCtrl.select">
+							<option value="/images/library">All Projects</option>
+                            <option value="/images/project">Current Project</option>
+                            <option value="/images/user">Personal</option>
+						</select>
+					</span>
+				</div>
+				<div class="search">
+					<form>
+						<div class="input-group">
+							<span class="input-group-addon"><span class="fa fa-search" aria-hidden="true"></span></span> 
+							
+							<input type="text" data-as-search-images="imagesCtrl.refId" data-as-type="imagesCtrl.type" class="form-control" id="searchImages" data-ng-model="searchImages"
+								placeholder="Search keywords and tags…" autocomplete="off" autocapitalize="off" spellcheck="false">
+  							<span class="fa fa-times-circle-o searchclear" data-as-clear-field="#searchImages"></span>
+  							
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="cards">
+				<div class="cards-container clearfix" data-as-cards>
+					<div class="card" data-as-ref-id="{{!image.ref_id}}" data-as-id="{{!image.id}}" data-ng-repeat="image in imagesCtrl.images">
+						<div class="image-card">
+							<div data-as-populate-and-open data-target="#image-modal" data-as-from="image" data-as-set="imagesCtrl.image">
+								<div class="lock" data-ng-if="image.state === 'locked'">
+									<span class="fa fa-lock"></span>
+								</div>
+								<div class="user" data-ng-if="image.user_id !== siteCtrl.userId" data-ng-class="{'no-caption': !image.caption}">
+									<span class="avatar">
+										<img data-ng-src="{{!image.avatar}}?d=mm&s=30" />
+									</span>
+									<span class="user-info">{{!image.first_name}} {{!image.last_name}}</span>
+								</div>
+						        <div class="info" data-ng-if="image.caption">
+	                            	<div class="img-name">{{!image.caption}}</div>
+	                            </div>
+	                            <div class="body image-body"><as-cloudinary-image image="image" max-width="198" /></div>
+							</div>
+							<div class="overlay" data-as-select-image="image" data-as-img-url="documentsCtrl.imgUrl">
+								<div class="center">
+									<div class="middle">
+										<div class="fa fa-check-circle"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="no-cards ng-cloak" data-ng-if="!imagesCtrl.requesting && !imagesCtrl.images.length">
+				<form method="post" action="{{!'/v1/images/' + imagesCtrl.refId}}" enctype="multipart/form-data" data-as-uploader data-as-loading="imagesCtrl.loading">
+				  	<input type="file" name="files" id="file" data-multiple-caption="{count} files" multiple />
+					It looks like you don't have any images here. To add some, click on the "<label for="file"><img src="{{static_url('images/add-icon.svg')}}" /></label>" above.
+				</form>
+			</div>
+			<div id="more-items" data-as-more-images data-as-next-start="imagesCtrl.nextStart" data-as-type="imagesCtrl.type" data-as-ref-id="imagesCtrl.refId" data-as-search="searchImages">
+				<a data-ng-show="imagesCtrl.nextStart"><span class="fa fa-chevron-circle-down" aria-hidden="true"></span></a>
+			</div>
+		</div>
+	</div>
+</div>
+	
+<div class="modal fade" id="image-modal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" data-as-modal>
+	<div class="modal-dialog image-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="imageModalLabel">View Image</h4>
+			</div>
+			<div class="modal-body cloudinary-image">
+				<p>
+					<as-cloudinary-image image="imagesCtrl.image" max-width="568" linked="true" />
+				</p>
+				<div data-ng-if="siteCtrl.validatePermission(imagesCtrl.image.ref_id, 3, imagesCtrl.image)">
+					<input type="text" class="form-control caption" data-ng-model="imagesCtrl.image.caption" placeholder="Caption" />
+					
+					<div class="btn-group state">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="caret"></span><span class="text" data-ng-bind-html="imagesCtrl.displayLockedStatus(imagesCtrl.image.state)"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a data-ng-click="imagesCtrl.image.state = ''">Unlocked <span class="fa fa-unlock"></span></a></li>
+							<li><a data-ng-click="imagesCtrl.image.state = 'locked'">Locked <span class="fa fa-lock"></span></a></li>
+						</ul>
+					</div>
+				</div>
+				<div data-ng-if="!siteCtrl.validatePermission(imagesCtrl.image.ref_id, 3, imagesCtrl.image)">
+					{{!imagesCtrl.image.caption}}
+				</div>
+			</div>
+			<div class="modal-footer" data-as-note-menu>
+				<button type="submit" class="btn btn-primary submit" data-as-edit-image="imagesCtrl.image" data-ng-if="siteCtrl.validatePermission(imagesCtrl.image.ref_id, 3, imagesCtrl.image)">Save</button>
+				<button type="button" class="btn btn-default cancel" data-dismiss="modal" data-ng-if="siteCtrl.validatePermission(imagesCtrl.image.ref_id, 3, imagesCtrl.image)">Cancel</button>
+                <button type="button" class="btn btn-default cancel" data-dismiss="modal" data-ng-if="!siteCtrl.validatePermission(imagesCtrl.image.ref_id, 3, imagesCtrl.image)">Close</button>
+				
+				<div class="btn-group note-menu pull-right" data-ng-if="siteCtrl.validatePermission(imagesCtrl.image.ref_id, 3, imagesCtrl.image)">
+					<a class="note-cog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="fa fa-cog" aria-hidden="true"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li id="copy-image">
+							<button type="button" class="btn btn-link" data-as-copy-image="imagesCtrl.image" data-as-project-id="projectCtrl.projectId" data-as-request-id="imagesCtrl.requestId" data-as-loading="imagesCtrl.loading">
+								<span class="fa fa-copy" aria-hidden="true"></span> Copy to <span data-ng-if="imagesCtrl.image.ref_id.indexOf('p') === 0">your private library</span><span data-ng-if="imagesCtrl.image.ref_id.indexOf('u') === 0">the Project "{{!projectCtrl.project.title}}"</span>
+							</button>
+						</li>
+						<li id="move-image">
+							<button type="button" class="btn btn-link" data-as-move-image="imagesCtrl.image" data-as-project-id="projectCtrl.projectId" data-as-request-id="imagesCtrl.requestId" data-as-loading="imagesCtrl.loading">
+								<span class="fa fa-external-link" aria-hidden="true"></span> Move to <span data-ng-if="imagesCtrl.image.ref_id.indexOf('p') === 0">your private library</span><span data-ng-if="imagesCtrl.image.ref_id.indexOf('u') === 0">the Project "{{!projectCtrl.project.title}}"</span>
+							</button>
+						</li>
+						<li role="separator" class="divider"></li>
+						<li>
+							<button type="button" class="btn btn-link" data-dismiss="modal" data-toggle="modal" data-target="#confirm-image-modal">
+								<span class="fa fa-times-circle-o" aria-hidden="true"></span> Delete Image
+							</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="confirm-image-modal" tabindex="-1" role="dialog" aria-labelledby="confirmImageModalLabel" data-as-modal>
+	<div class="modal-dialog" role="document">
+		<div class="modal-content card-dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="confirmImageModalLabel">Delete Image</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					Are you sure you wish to delete this image? This action cannot be undone. 
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary submit" data-dismiss="modal" data-as-delete-image="imagesCtrl.image">Yes, I am sure</button>
+                <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,38 @@
+{
+  "name": "airstory",
+  "version": "1.0.0",
+  "description": "Airstory",
+  "devDependencies": {
+    "autoprefixer": "^6.3.3",
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^0.14.0",
+    "grunt-contrib-imagemin": "^1.0.0",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-rename": "0.0.3",
+    "grunt-contrib-uglify": "^0.11.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-postcss": "^0.7.2"
+  },
+  "dependencies": {
+    "angular": "^1.5.0",
+    "angular-cookies": "^1.5.0",
+    "angular-route": "^1.5.0",
+    "angular-ui-sortable": "^0.14.3",
+    "angular-validation-match": "^1.7.1",
+    "font-awesome": "^4.6.1",
+    "jquery": "^2.2.1",
+    "jquery-minicolors": "^2.1.10",
+    "jquery-ui-touch-punch": "^0.2.3",
+    "ng-tags-input": "^3.0.0",
+    "urijs": "^1.17.1",
+    "lodash": "^4.16.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/Airstory"
+  },
+  "author": "Steven Luke"
+}

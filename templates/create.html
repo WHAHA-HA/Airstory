@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/account.min.css')}}">
+</head>
+<body data-ng-app="asApp" data-ng-controller="CreateCtrl">
+	{% include "include/tags.html" %}
+	{% include "include/nav.html" %}
+	<div id="viewport">
+		<div id="title">
+			Create Account
+		</div>
+		<div id="account">
+			<div class="alert alert-danger ng-cloak" role="alert" data-ng-show="msg">{{!msg}}</div>
+			<form name="account" data-ng-submit="createAccount()" novalidate>
+				<input type="email" class="form-control" placeholder="Email" data-ng-model="user.email" data-ng-required="true" />
+				<input type="text" class="form-control" placeholder="First Name" data-ng-model="user.first_name" data-ng-required="true" />
+				<input type="text" class="form-control" placeholder="Last Name" data-ng-model="user.last_name" data-ng-required="true" />
+				<input type="password" class="form-control" placeholder="Password" data-ng-model="user.password" data-ng-required="true" autocomplete="off" />
+				<input data-ng-class="{'error': account.confirm.$error.match}" type="password" class="form-control" placeholder="Confirm Password" data-ng-model="user.confirmPassword" name="confirm" data-ng-required="true" data-match="user.password" autocomplete="off" />
+				<button type="submit" data-ng-disabled="account.$invalid" class="btn btn-primary">Create Account</button>
+			</form>
+		</div>
+	</div>
+	
+	<div class="grayout" data-ng-cloak data-ng-show="processing">
+	</div>
+	<img data-ng-show="processing" data-ng-cloak class="wait" src="{{static_url('images/spinner.gif')}}" />
+
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

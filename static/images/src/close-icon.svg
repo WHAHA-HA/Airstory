@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+    <title>Close Icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Sans-Serif-Font-Treatment" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-1208.000000, -17.000000)" fill="#363636">
+            <g id="Panel-Icons" transform="translate(1120.000000, 17.000000)">
+                <polygon id="Close-Icon" points="96 6 91 1 89 3 94 8 89 13 91 15 96 10 101 15 103 13 98 8 103 3 101 1"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

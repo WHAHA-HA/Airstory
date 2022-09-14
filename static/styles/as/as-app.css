@@ -1,0 +1,115 @@
+[data-as-splitter-panel="left"] {
+	float: left;
+}
+
+[data-as-splitter-panel="right"] {
+	float: left;
+}
+
+.as-splitter-handle{
+	display: none;
+	overflow-x: auto;
+}
+
+[data-as-splitter]{
+	width: 200vw;
+	overflow: hidden;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], .ng-cloak {
+  display: none !important;
+}
+
+.tilt {
+	-ms-transform: rotate(3deg);
+	    transform: rotate(3deg);
+	-moz-transform: rotate(3deg);
+	-webkit-transform: rotate(3deg);
+}
+
+.sticky-fixed {
+	position: absolute !important;
+	top: 0px;
+	left: 50px;
+	right: 0px;
+	z-index: 98 !important;
+}
+
+.sticky-fixed-container {
+	padding-top: 29px;
+}
+
+[data-as-logout] {
+	cursor: pointer;
+}
+
+[data-as-toolbar-dialog] .dropdown-menu {
+	display: none;
+}
+
+.wysihtml5-command-dialog-opened + .dropdown-menu {
+	display: block;
+}
+
+[data-as-uploader] {
+	display: block;
+	position: relative;
+}
+
+[data-as-uploader] input[type="file"] {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+[data-as-uploader] input[type="file"] + label {
+	cursor: pointer;
+}
+
+[data-as-uploader] input[type="file"] + label * {
+	pointer-events: none;
+}
+
+@media (max-width: 767px) and (min-width: 0px) {
+	[data-as-splitter-panel="left"] {
+		width: calc(50% - 50px) !important;
+		display: inline-block !important;
+	}
+	
+	[data-as-splitter-panel="right"] {
+		width: calc(50% - 50px) !important;
+		display: inline-block !important;
+	}
+}
+
+@media (min-width: 768px) {
+	.as-splitter-handle {
+		position: fixed;
+		right: 470px;
+		top: 50%;
+	    -ms-transform: translate(0, -50%);
+	    -webkit-transform: translate(0, -50%);
+	    transform: translate(0, -50%);
+	    display: block;
+	    z-index: 102;
+	}
+	
+	[data-as-splitter-panel="left"] {
+		width: 100%;
+		display: inline-block;
+		float: left;
+	}
+	
+	[data-as-splitter-panel="right"] {
+		position: absolute;
+		width: 470px;
+		right: 0px;
+	}
+
+	[data-as-splitter]{
+		width: 100%;
+	}
+}

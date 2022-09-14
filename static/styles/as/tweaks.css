@@ -1,0 +1,62 @@
+.navbar {
+	height: 64px;
+	border-radius: 0px;
+	z-index: 98;
+}
+
+.navbar-default {
+	background-color: #ffffff;
+	background-image: none;
+	border: 0px solid #ffffff;
+	box-shadow: none;
+}
+
+.container-fluid {
+	padding: 0;
+}
+
+nav {
+    white-space: nowrap;
+	width: 100%;
+}
+
+.btn {
+	border-radius: 0px;
+}
+
+.btn-primary {
+	background-color: #2278CF;
+}
+
+.ui-dialog-titlebar {
+	display: none;
+}
+
+.ui-dialog {
+	border-radius: 0px;
+	background-color: #F5F5F5;
+	background-image: none;
+	border: 1px solid #C7C7C7;
+}
+
+a {
+	cursor: pointer;
+}
+
+.alert-info {
+	color: #FFFFFF;
+	border: 1px solid #A161A4;
+	background-color: #A161A4;
+}
+
+.alert-success {
+	color: #FFFFFF;
+	border: 1px solid #5FC19C;
+	background-color: #5FC19C;
+}
+
+.alert-danger {
+	color: #FFFFFF;
+	border: 1px solid #FB1D5C;
+	background-color: #FB1D5C;
+}

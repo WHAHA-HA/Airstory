@@ -1,0 +1,80 @@
+html,
+body {
+  height: 100%;
+  background-color: #F2F2F2;
+}
+
+#viewport {
+	padding-left: 50px;
+}
+
+#login {
+	padding: 20px;
+	width: 500px;
+}
+
+#account {
+	padding: 20px;
+	width: 500px;
+}
+
+#account h4 {
+	overflow: hidden;
+}
+
+.form-control {
+	margin-bottom: 10px;
+}
+
+button[type="submit"]{
+	float:right;
+	width: 150px;
+}
+
+button.cancel {
+	float:right;
+	margin-right: 10px;
+}
+
+#forgot-password {
+	clear: right;
+	float: right;
+	padding-top: 5px;
+	font-size: 12px;
+}
+
+input.error {
+	border: 1px solid red;
+}
+
+.grayout {
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	position: fixed;
+	background-color: #ffffff;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+    display: table-cell;
+    vertical-align: middle;
+}
+
+img.wait {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+}
+
+#create-account {
+	float: left;
+	padding-top: 10px;
+}
+
+form[name="password"] {
+	padding-top: 10px;
+}

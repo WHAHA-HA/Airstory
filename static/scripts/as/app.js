@@ -1,0 +1,1 @@
+var app = angular.module('asApp', ['ngRoute', 'ngCookies', 'validation.match', 'ngTagsInput', 'ui.sortable']);

@@ -1,0 +1,2237 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Airstory API",
+        "description": "Airstory Public API",
+        "version": "1.0.0"
+    },
+    "host": "app.airstory.co",
+    "schemes": [
+        "https"
+    ],
+    "basePath": "/v1",
+    "paths": {
+        "/users": {
+            "post": {
+                "description": "Create User",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "User Object",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created User",
+                        "headers": {
+                            "Link": {
+                                "description": "User ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Email already exists"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Retrieve User",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique email address or User ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User found",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update User (Must be logged in as the user being updated)",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique email address",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "User Object",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "PUT"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete User (Must be logged in as the user being deleted)",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique email address",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/users/{id}/authenticate": {
+            "post": {
+                "description": "Authenticate user, get cookies",
+                "consumes": [
+                    "text/plain"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique email address",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Users password as text (no formatting)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "POST"
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Authenticated User"
+                    },
+                    "400": {
+                        "description": "Authentication failed"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/users/{id}/deauthenticate": {
+            "post": {
+                "description": "Deauthenticate user, remove cookies",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique email address",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deauthenticated User"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/users/{id}/password-reset": {
+            "post": {
+                "description": "Create a temp password for user and send it to them in an email",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique email address",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset for User"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/user-projects": {
+            "post": {
+                "description": "Add user to a project based off of an invitation",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "User Project Object",
+                        "schema": {
+                            "$ref": "#/definitions/UserProject"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Invitation",
+                    "User",
+                    "Project",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully assigned user to project"
+                    },
+                    "400": {
+                        "description": "Invalid invitation for this project"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/users/{user_id}": {
+            "delete": {
+                "description": "Remove a user from a project",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID (UUID)",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "Unique user ID (UUID)",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "User",
+                    "Project",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed user to project"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "User not in this project"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/users": {
+            "get": {
+                "description": "Retrieve all users in a project",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Users",
+                    "Project",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Users found",
+                        "schema": {
+                            "title": "users",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Project not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/invitations": {
+            "post": {
+                "description": "Create Invitation",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Invitation payload",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Invitation"
+                        }
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "Invitation",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invitation created",
+                        "headers": {
+                            "Link": {
+                                "description": "Invitation ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/invitations/{invitation_id}": {
+            "get": {
+                "description": "Retrieve Invitation",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitation_id",
+                        "in": "path",
+                        "description": "Unique invitation ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "Invitation",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invitation found",
+                        "schema": {
+                            "$ref": "#/definitions/Invitation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Invitation",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invitation_id",
+                        "in": "path",
+                        "description": "Unique invitation ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "Invitation",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Invitation deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Invitation not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects": {
+            "post": {
+                "description": "Create Project",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Project Object",
+                        "schema": {
+                            "$ref": "#/definitions/Project"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created Project",
+                        "headers": {
+                            "Link": {
+                                "description": "Project ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "get": {
+                "description": "Get all projects for auth user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Project",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Projects found",
+                        "schema": {
+                            "title": "projects",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Project"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Projects not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}": {
+            "get": {
+                "description": "Retrieve Project",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project found",
+                        "schema": {
+                            "$ref": "#/definitions/Project"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Project not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Project",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Project Object",
+                        "schema": {
+                            "$ref": "#/definitions/Project"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "PUT"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project updated"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Project not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Project",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Project not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/documents": {
+            "get": {
+                "description": "Retrieve Documents in Project",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "Document",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project found",
+                        "schema": {
+                            "title": "documents",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Document"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Project not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/documents/{id}": {
+            "get": {
+                "description": "Retrieve Document",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique document ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "Document",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Document found",
+                        "schema": {
+                            "$ref": "#/definitions/Document"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Document not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Document",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique document ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "Document",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Document deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Document not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/documents/{id}/title": {
+            "put": {
+                "description": "Update Document's Title",
+                "consumes": [
+                    "text/plain"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique project ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique document ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The document's title",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Project",
+                    "Document",
+                    "PUT"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Document Title updated"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Document not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/projects/{project_id}/ot/{document_id}": {
+            "post": {
+                "description": "Create/Open OT Snapshot",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique reference to the project",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "document_id",
+                        "in": "path",
+                        "description": "Unique reference to the document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Snapshot Object",
+                        "schema": {
+                            "$ref": "#/definitions/Snapshot"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "request_id",
+                        "in": "header",
+                        "description": "A unique ID that identifies this user/request",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "header",
+                        "description": "The OT Type being used (default is jsonml0)",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "OT",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully opened/created document",
+                        "schema": {
+                            "$ref": "#/definitions/Snapshot"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Apply operation to Snapshot",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "description": "Unique reference to the project",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "document_id",
+                        "in": "path",
+                        "description": "Unique reference to the document",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "OTOp Object",
+                        "schema": {
+                            "$ref": "#/definitions/Ops"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "request_id",
+                        "in": "header",
+                        "description": "A unique ID that identifies this user/request",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "header",
+                        "description": "The OT Type being used (default is jsonml0)",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "OT",
+                    "PATCH"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully applied ops to Snapshot",
+                        "schema": {
+                            "$ref": "#/definitions/Ops"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "409": {
+                        "description": "Duplicate request"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/notes": {
+            "get": {
+                "description": "Get all notes for auth user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notes",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notes found",
+                        "schema": {
+                            "title": "notes",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Note"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Notes not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/notes/{ref_id}": {
+            "post": {
+                "description": "Create Note",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project ID or a user ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Note Object",
+                        "schema": {
+                            "$ref": "#/definitions/Note"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Notes",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created Note",
+                        "headers": {
+                            "Link": {
+                                "description": "Note ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Reference not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "get": {
+                "description": "Get all referenced notes",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project or a user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Notes",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Notes found",
+                        "schema": {
+                            "title": "notes",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Note"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Notes not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/notes/{ref_id}/note/{id}": {
+            "get": {
+                "description": "Retrieve Note",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project or a user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique note ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Notes",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Note found",
+                        "schema": {
+                            "$ref": "#/definitions/Note"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Note not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Note",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project or a user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique note ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Note Object",
+                        "schema": {
+                            "$ref": "#/definitions/Note"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Notes",
+                    "PUT"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Note updated"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Note not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Note",
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project or a user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique note ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Notes",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Note deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Note not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/images/{ref_id}": {
+            "post": {
+                "description": "Create Image",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project ID or a user ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Image(s) being uploaded",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Images",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created Image",
+                        "headers": {
+                            "Link": {
+                                "description": "Image ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Reference not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "get": {
+                "description": "Get all referenced notes (not yet implemented)",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project or a user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Images",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Images found",
+                        "schema": {
+                            "title": "notes",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Image"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Images not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/images/{ref_id}/image/{id}": {
+            "get": {
+                "description": "Retrieve Image (not yet implemented)",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project or a user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique image ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Images",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Image found",
+                        "schema": {
+                            "$ref": "#/definitions/Image"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Image not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Image",
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique reference to either a project or a user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique image ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Images",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Image deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Image not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/documents": {
+            "post": {
+                "description": "Create Document",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Document Object",
+                        "schema": {
+                            "$ref": "#/definitions/Document"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Document",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created Document",
+                        "headers": {
+                            "Link": {
+                                "description": "Document ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/comments/{ref_id}": {
+            "post": {
+                "description": "Create Comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Comment Object",
+                        "schema": {
+                            "$ref": "#/definitions/Comment"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Comment",
+                    "Document",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created Comment",
+                        "headers": {
+                            "Link": {
+                                "description": "Comment ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "get": {
+                "description": "Get all comments for a document",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Comment",
+                    "Document",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comments found",
+                        "schema": {
+                            "title": "comments",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Comment"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Comments not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/comments/{ref_id}/comment/{id}": {
+            "get": {
+                "description": "Retrieve Comment",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique comment ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Comment",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment found",
+                        "schema": {
+                            "$ref": "#/definitions/Comment"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Comment",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique comment ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Comment Object",
+                        "schema": {
+                            "$ref": "#/definitions/Comment"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Comment",
+                    "PUT"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment updated"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Comment",
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique comment ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Comment",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/citations/{ref_id}": {
+            "post": {
+                "description": "Create Citation",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of either product_id|note_id, user_id|note_id or product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Citation Object",
+                        "schema": {
+                            "$ref": "#/definitions/Citation"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Citation",
+                    "POST"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created Citation",
+                        "headers": {
+                            "Link": {
+                                "description": "Citation ID",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "get": {
+                "description": "Get all citations for a document or note",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of either product_id|note_id, user_id|note_id or product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Citation",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Citations found",
+                        "schema": {
+                            "title": "citations",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Citation"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Citations not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        },
+        "/citations/{ref_id}/citation/{id}": {
+            "get": {
+                "description": "Retrieve Citation",
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of either product_id|note_id, user_id|note_id or product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique citation ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Citation",
+                    "GET"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Citation found",
+                        "schema": {
+                            "$ref": "#/definitions/Citation"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Citation not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Citation",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of either product_id|note_id, user_id|note_id or product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique citation ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Citation Object",
+                        "schema": {
+                            "$ref": "#/definitions/Citation"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "Citation",
+                    "PUT"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Citation updated"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Citation not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Citation",
+                "parameters": [
+                    {
+                        "name": "ref_id",
+                        "in": "path",
+                        "description": "Unique composit ID of either product_id|note_id, user_id|note_id or product_id|document_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Unique citation ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Citation",
+                    "DELETE"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Citation deleted"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Citation not found"
+                    },
+                    "500": {
+                        "description": "Unexpected Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique user id (UUID). Only required in responses."
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Unique email address."
+                },
+                "password": {
+                    "type": "string",
+                    "description": "Secret password. Only required in requests."
+                },
+                "first_name": {
+                    "type": "string",
+                    "description": "Users first name"
+                },
+                "last_name": {
+                    "type": "string",
+                    "description": "Users last name"
+                },
+                "permissions": {
+                    "type": "string",
+                    "description": "Site wide permissions this user has (only returned from server)"
+                }
+            }
+        },
+        "UserProject": {
+            "type": "object",
+            "properties": {
+                "project_id": {
+                    "type": "string",
+                    "description": "Unique project id (UUID)."
+                },
+                "invitation_id": {
+                    "type": "string",
+                    "description": "Unique invitation id (UUID)."
+                }
+            }
+        },
+        "Invitation": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "Unique ID (UUID)"
+                },
+                "full_name": {
+                    "type": "string",
+                    "description": "The invitees full name"
+                },
+                "created": {
+                    "type": "number",
+                    "description": "Creation date of the invitation"
+                },
+                "project_id": {
+                    "type": "string",
+                    "description": "The Project ID"
+                },
+                "project_name": {
+                    "type": "string",
+                    "description": "The Project Name"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Email address where the invite should go to"
+                }
+            }
+        },
+        "Project": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "Project title"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Description of the project"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "Current status of the project such as deleting (only returned from server)"
+                }
+            }
+        },
+        "Document": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "description": "Document title"
+                },
+                "project_id": {
+                    "type": "string",
+                    "description": "Project ID of that this document is a part of"
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Unique document ID"
+                },
+                "created": {
+                    "type": "number",
+                    "description": "Creation date/time"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "The default layout that should be loaded when this document is loaded. Can either be 'e' for editor or 'o' for outliner"
+                }
+            }
+        },
+        "Note": {
+            "type": "object",
+            "properties": {
+                "ref_id": {
+                    "type": "string",
+                    "description": "Reference ID to the project or user this note is tied to"
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Unique ID for this specific note"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "The note's title"
+                },
+                "display_content": {
+                    "type": "string",
+                    "description": "A shorted, cleaned up, snippit of the note's content"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "The full HTML version of the note. May not always be returned."
+                },
+                "created": {
+                    "type": "number",
+                    "description": "Creation date/time"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "citations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Citation"
+                    }
+                }
+            }
+        },
+        "Image": {
+            "type": "object",
+            "properties": {
+                "ref_id": {
+                    "type": "string",
+                    "description": "Reference ID to the project or user this image is tied to"
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Unique ID for this specific image"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The images's name"
+                },
+                "created": {
+                    "type": "number",
+                    "description": "Creation date/time"
+                },
+                "width": {
+                    "type": "number",
+                    "description": "The image's width"
+                },
+                "height": {
+                    "type": "number",
+                    "description": "The image's height"
+                }
+            }
+        },
+        "Comment": {
+            "type": "object",
+            "properties": {
+                "ref_id": {
+                    "type": "string",
+                    "description": "Reference ID to the document this comment is tied to"
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Unique ID for this specific comment"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "The content of the comment"
+                },
+                "created": {
+                    "type": "number",
+                    "description": "Creation date/time"
+                },
+                "user_id": {
+                    "type": "string",
+                    "description": "The user who made the comment"
+                },
+                "link": {
+                    "type": "string",
+                    "description": "A link to another comment"
+                }
+            }
+        },
+        "Citation": {
+            "type": "object",
+            "properties": {
+                "ref_id": {
+                    "type": "string",
+                    "description": "Reference ID to the document this comment is tied to"
+                },
+                "id": {
+                    "type": "string",
+                    "description": "Unique ID for this specific comment"
+                },
+                "page_title": {
+                    "type": "string",
+                    "description": "Title of the website"
+                },
+                "author": {
+                    "type": "string",
+                    "description": "Author of the website"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL of the website"
+                },
+                "article_title": {
+                    "type": "string",
+                    "description": "The title of the article"
+                },
+                "publication_date": {
+                    "type": "string",
+                    "description": "Date of publish"
+                }
+            }
+        },
+        "Snapshot": {
+            "type": "object",
+            "properties": {
+                "open": {
+                    "type": "boolean",
+                    "description": "Request to open the file and have it sent to client"
+                },
+                "create": {
+                    "type": "boolean",
+                    "description": "If true, request to create a file if does not exist. If it exists, will send back to client with latest version. If false or not provided, send back all the operations since the provide version number (used when reconnecting to the server)"
+                },
+                "v": {
+                    "type": "number",
+                    "description": "The version that you currently have (used for reconnecting to the server)"
+                },
+                "revert": {
+                    "type": "boolean",
+                    "description": "If true, delete any operation that is causing an issue with this snapshot. This is used to revert to the last known good version of a document."
+                },
+                "last": {
+                    "type": "number",
+                    "description": "Used in the response only. This is returned when you reconnect to the server on an already opened document. This is the last version of an operation that the client had sent to the server"
+                },
+                "ops": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Op"
+                    }
+                },
+                "reverts": {
+                    "type": "number",
+                    "description": "The number of reverts that have been applied to this document (only returned from the server"
+                },
+                "snapshot": {
+                    "type": "object",
+                    "description": "The most current snapshot (only returned from the server)"
+                }
+            }
+        },
+        "Ops": {
+            "type": "object",
+            "properties": {
+                "v": {
+                    "type": "number",
+                    "description": "The version that the client expects the snapshot should become after applying this operation (version may change in response depending on the state of the server)"
+                },
+                "op": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Op"
+                    },
+                    "description": "The operation that you are sending to the server to be applied to the snapshot. This will also be send onto other users after being transformed (if neccessary)"
+                },
+                "ops": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Op"
+                    },
+                    "description": "This is only returned from the server and should only be applied to the user who sent this operation. These are the operations that had been applied to the server at the same time that this operation was being sent."
+                }
+            }
+        },
+        "Op": {
+            "type": "object",
+            "properties": {
+                "p": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "description": "Integers or strings that make up the path where the operation should be applied"
+                }
+            }
+        }
+    }
+}

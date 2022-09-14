@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% include "include/head-tags.html" %}
+	<link rel="stylesheet" href="{{static_url('styles/account.min.css')}}">
+</head>
+<body data-ng-app="asApp" data-ng-controller="PasswordResetCtrl">
+	{% include "include/tags.html" %}
+	{% include "include/nav.html" %}
+	<div id="viewport">
+		<div id="title">
+			Forgot Password
+		</div>
+	
+		<div id="account">
+			<div data-ng-class="clazz" data-ng-cloak role="alert" data-ng-show="msg">{{!msg}}</div>
+			<form name="forgot" data-ng-submit="passwordReset()" novalidate>
+				<input type="email" class="form-control" placeholder="Email" data-ng-model="email" data-ng-required="true" />
+				<button type="submit" data-ng-disabled="forgot.$invalid" class="btn btn-primary">Reset Password</button>
+			</form>
+		</div>
+	</div>
+	
+	<div class="grayout" data-ng-cloak data-ng-show="processing">
+	</div>
+	<img data-ng-show="processing" data-ng-cloak class="wait" src="{{static_url('images/spinner.gif')}}" />
+
+	<script src="{{static_url('scripts/third-party.min.js')}}"></script>
+	<script src="{{static_url('scripts/airstory.min.js')}}"></script>
+</body>
+</html>

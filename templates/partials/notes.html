@@ -1,0 +1,449 @@
+<div id="source-panel">
+	<div>
+		<div class="document-mobile" data-as-scroll-to-document>
+			<span class="fa fa-edit" aria-hidden="true"></span>
+		</div>
+		<div id="title">
+			Card Library
+		</div>
+		<div class="controls">
+			<div class="add" data-toggle="modal" data-target="#add-note-modal" data-ng-if="notesCtrl.type != 'archive' && (!projectCtrl || notesCtrl.type === 'user' || siteCtrl.validatePermission(projectCtrl.projectId, 3))">
+				<img src="{{static_url('images/add-icon.svg')}}" />
+			</div>
+			<!-- <div class="settings">
+				<img src="{{static_url('images/settings-icon.svg')}}" />
+			</div> -->
+			<div class="fullsize" data-as-splitter-full-size>
+				<img src="{{static_url('images/expand-icon.svg')}}" />
+			</div>
+			<div class="closeit" data-as-splitter-close>
+				<img src="{{static_url('images/close-icon.svg')}}" />
+			</div>
+		</div>
+	</div>
+	<div>
+		<div id="drawer">
+			<div class="drawer-controls">
+				<div class="select">
+					 <span class="plain-select">
+						<select data-ng-model="notesCtrl.select" data-as-drawer-display="notesCtrl.select">
+							<option value="/notes/library">All Projects</option>
+                            <option value="/notes/project" data-ng-if="projectCtrl">Current Project</option>
+                            <option value="/notes/user">Personal</option>
+                            <option value="/notes/archive">Archive</option>
+						</select>
+					</span>
+				</div>
+				<div class="search">
+					<form>
+						<div class="input-group">
+							<span class="input-group-addon"><span class="fa fa-search" aria-hidden="true"></span></span> 
+							
+							<input type="text" data-as-search-notes="notesCtrl.refId" data-as-type="notesCtrl.type" class="form-control" id="searchNotes" data-ng-model="searchNotes"
+								placeholder="Search keywords and tags…" autocomplete="off">
+  							<span class="fa fa-times-circle-o searchclear" data-as-clear-field="#searchNotes"></span>
+  							
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="cards">
+				<div class="cards-container clearfix ng-cloak" data-as-cards data-ng-if="notesCtrl.notes.length">
+					<div class="card" data-as-ref-id="{{!note.ref_id}}" data-as-id="{{!note.id}}" data-ng-repeat="note in notesCtrl.notes" data-toggle="modal" data-target="#edit-note-modal"
+						data-as-populate-note-modal="note">
+						<div class="note-card">
+							<div class="lock" data-ng-if="note.state === 'locked'">
+								<span class="fa fa-lock"></span>
+							</div>
+							<div class="user no-caption" data-ng-if="note.user_id !== siteCtrl.userId">
+								<span class="avatar">
+									<img data-ng-src="{{!note.avatar}}?d=mm&s=30" />
+								</span>
+								<span class="user-info">{{!note.first_name}} {{!note.last_name}}</span>
+							</div>
+                            <h3 data-ng-if="note.title">{{!note.title}}</h3>
+                            <div class="body">{{!note.display_content}}</div>
+                            <ul class="tags clearfix" data-ng-show="note.tags.length">
+                                <li class="tag-item" data-ng-repeat="tag in note.tags" data-as-trigger-search-tag="#searchNotes">{{!tag}}</li>
+                            </ul>
+                            <div class="note-citations" data-ng-if="note.citations.length">
+	                            <div class="note-citation" data-ng-repeat="citation in note.citations">
+	                            	{{!notesCtrl.structureCitation(citation)}}
+	                            </div>
+                            </div>
+                        </div>
+					</div>
+				</div>
+			</div>
+			<div class="no-cards ng-cloak" data-ng-if="!notesCtrl.requesting && !notesCtrl.notes.length && notesCtrl.type != 'archive'">
+				It looks like you don't have any notes here. <span data-ng-if="!projectCtrl || notesCtrl.type === 'user' || siteCtrl.validatePermission(projectCtrl.projectId, 3)">To add some, click on the "<a data-toggle="modal" data-target="#add-note-modal"><img src="{{static_url('images/add-icon.svg')}}" /></a>" above.</span>
+			</div>
+			<div class="no-cards ng-cloak" data-ng-if="!notesCtrl.requesting && !notesCtrl.notes.length && notesCtrl.type == 'archive'">
+				You do not currently have any archived notes.
+			</div>
+			<div id="more-items" data-as-more-notes data-as-next-start="notesCtrl.nextStart" data-as-type="notesCtrl.type" data-as-ref-id="notesCtrl.refId" data-as-search="searchNotes">
+				<a data-ng-show="notesCtrl.nextStart"><span class="fa fa-chevron-circle-down" aria-hidden="true"></span></a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="add-note-modal" tabindex="-1" role="dialog" aria-labelledby="addNoteModalLabel" data-as-note-modal>
+	<div class="modal-dialog card-dialog" role="document">
+		<div class="modal-content">
+			<form name="addNote" novalidate>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="addNoteModalLabel">
+                        Add Card
+                    </h4>
+				</div>
+				<div class="modal-body">
+					<div class="btn-group btn-group-xs features" role="group">
+						<button type="button" class="btn btn-default" data-ng-class="{active: !notesCtrl.displayCitation}" data-ng-click="notesCtrl.displayCitation = false">Content</button>
+						<button type="button" class="btn btn-default" data-ng-class="{active: notesCtrl.displayCitation}" data-ng-click="notesCtrl.displayCitation = true">Citation</button>
+					</div>
+					<div data-ng-show="!notesCtrl.displayCitation">
+						<input class="form-control note-title" data-ng-model="notesCtrl.addnote.title" placeholder="Card title (optional)" />
+                        <div class="full-height">
+                            <div class="container-fluid toolbar-container">
+                                <div class="toolbar" id="add-note-toolbar">
+                                    <div class="controls">
+                                        <div class="btn-group control font-type">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-as-editor-control="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Font Type">
+                                                Format <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" data-as-editor-trigger-change="" href="javascript:;" unselectable="on" class="wysihtml5-command-active">Title</a></li>
+                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Heading</a></li>
+                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Subheading</a></li>
+                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="p" data-as-editor-trigger-change="" href="javascript:;" unselectable="on" class="">Normal text</a></li>
+                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="pre" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Fixed width</a></li>
+                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="blockquote" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Quote block</a></li>
+                                            </ul>
+                                        </div>
+                                        <!-- TODO: on click, keep selected background colour -->
+                                        <div class="control">
+                                            <button type="button" class="btn btn-default" data-wysihtml5-command="bold" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Bold" unselectable="on">
+                                                <span class="fa fa-bold" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <div class="control control-separator">
+                                            <button type="button" class="btn btn-default" data-wysihtml5-command="italic" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Italics" unselectable="on">
+                                                <span class="fa fa-italic" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <div class="control">
+                                            <button type="button" class="btn btn-default" data-wysihtml5-command="insertUnorderedList" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Insert Unordered List" unselectable="on">
+                                                <span class="fa fa-list-ul" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <div class="control control-separator">
+                                            <button type="button" class="btn btn-default" data-wysihtml5-command="insertOrderedList" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Insert Ordered List" unselectable="on">
+                                                <span class="fa fa-list-ol" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                        <div class="btn-group control link" data-as-toolbar-dialog>
+                                            <button type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-wysihtml5-command="createLink" title="Create Link" unselectable="on">
+                                                <span class="fa fa-link" aria-hidden="true"></span>
+                                            </button>
+                                            <div id="link-dialog" class="dropdown-menu dropdown-menu-right" data-wysihtml5-dialog="createLink" style="display: none;" data-as-link-dialog="#add-note-content">
+                                                <div class="url-field">
+                                                    <input type="text" class="form-control" id="modal-link-url" data-wysihtml5-dialog-field="href" value="http://">
+                                                </div>
+                                                <div>
+                                                    <a class="btn btn-primary" data-wysihtml5-dialog-action="save">OK</a>
+                                                    <a class="btn btn-default" data-wysihtml5-dialog-action="cancel">Cancel</a>
+                                                    <a class="btn btn-default remove-link"><span class="fa fa-unlink"></span></a>
+											    	<a class="go-to-link"><span class="fa fa-external-link"></span></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-as-editor="add-note-toolbar" id="add-note-content" data-ng-keyup="addNoteContentInvalid = $('#add-note-content').data('wysiwyg').getValue() == ''" class="form-control note-content"
+                                data-ng-model="notesCtrl.addnote.content" data-placeholder="Type here...">
+                            </div>
+                        </div>
+                        
+						<tags-input data-ng-model="notesCtrl.addnote.tags" />
+						
+						<div class="btn-group state">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="caret"></span><span class="text" data-ng-bind-html="notesCtrl.displayLockedStatus(notesCtrl.addnote.state)"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a data-ng-click="notesCtrl.addnote.state = ''">Unlocked <span class="fa fa-unlock"></span></a></li>
+								<li><a data-ng-click="notesCtrl.addnote.state = 'locked'">Locked <span class="fa fa-lock"></span></a></li>
+							</ul>
+						</div>
+					</div>
+					<div data-ng-show="notesCtrl.displayCitation">
+						<div data-ng-show="notesCtrl.addnote.citations.length > 0" class="citations">
+							<div class="addcitation-list">
+								<div data-ng-repeat="citation in notesCtrl.addnote.citations" class="citation">
+								 	<div class="options">
+								 		<a data-ng-if="notesCtrl.addnote.citations.length !== 1" data-ng-click="notesCtrl.removeCitation(notesCtrl.addnote.citations, citation)">
+								 			<span class="fa fa-times" aria-hidden="true"></span>
+								 		</a>
+								 	</div>
+									<div class="addcitation">
+										<input type="text" data-ng-model="citation.article_title" class="form-control" placeholder="Article Title" />
+										<input type="text" data-ng-model="citation.page_title" class="form-control" placeholder="Website Title" />
+										<input type="text" data-ng-model="citation.url" class="form-control" placeholder="URL" />
+										<input type="text" data-ng-model="citation.author" class="form-control" placeholder="Author" />
+										<input type="text" data-ng-model="citation.publication_date" class="form-control" placeholder="Publication date" />
+									</div>
+								</div>
+                                <a class="one-more-citation" data-as-add-citation data-as-to="notesCtrl.addnote.citations">Add one more citation</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="checkbox">
+						<label> 
+							<input type="checkbox" data-ng-model="copyAdd" /> Save a copy of this note to <span data-ng-if="notesCtrl.refId.indexOf('p') === 0">your private library</span><span data-ng-if="notesCtrl.refId.indexOf('u') === 0">the Project "{{!projectCtrl.project.title}}"</span>
+						</label>
+					</div>
+                    <button type="submit" class="btn btn-primary submit" data-as-add-note="notesCtrl.addnote" data-as-project-id="notesCtrl.projectId" data-as-user-id="notesCtrl.userId" data-as-ref-id="notesCtrl.refId" data-as-request-id="notesCtrl.requestId" data-as-should-copy="copyAdd" data-ng-disabled="addNote.$invalid || addNoteContentInvalid || notesCtrl.invalidContent('#add-note-content')">
+						Save Card
+					</button>
+                    <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+
+					<div class="btn-group note-menu pull-right">
+						<a class="note-cog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="fa fa-cog" aria-hidden="true"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li id="add-citation">
+								<button type="button" class="btn btn-link" data-as-add-citation data-as-to="notesCtrl.addnote.citations" data-ng-click="notesCtrl.displayCitation = true">
+									<span class="fa fa-book" aria-hidden="true"></span> Add Citation
+								</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="edit-note-modal" tabindex="-1" role="dialog" aria-labelledby="editNoteModalLabel" data-as-note-modal="notesCtrl.editnote" data-as-request-id="notesCtrl.requestId">
+	<div class="modal-dialog card-dialog" role="document">
+		<div class="modal-content">
+			<form name="editNote" novalidate>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="editNoteModalLabel">
+						Edit Card
+					</h4>
+				</div>
+				<div class="modal-body">
+					<div class="btn-group btn-group-xs features" role="group">
+						<button type="button" class="btn btn-default" data-ng-class="{active: !notesCtrl.displayCitation}" data-ng-click="notesCtrl.displayCitation = false">Content</button>
+						<button type="button" class="btn btn-default" data-ng-class="{active: notesCtrl.displayCitation}" data-ng-click="notesCtrl.displayCitation = true">Citation</button>
+					</div>
+
+					<div data-ng-show="!notesCtrl.displayCitation">
+						<div data-ng-if="!siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)" class="display-note">
+							<div data-ng-if="notesCtrl.editnote.title">
+								<h2>{{!notesCtrl.editnote.title}}</h2>
+							</div>
+							<div class="body" data-ng-bind-html="notesCtrl.trust(notesCtrl.editnote.content)">
+							</div>
+							<div class="tags clearfix">
+								<span class="tag-item" data-ng-repeat="tag in notesCtrl.editnote.tags">{{!tag}}</span>
+							</div>
+						</div>
+						<div data-ng-if="siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)">
+							<input class="form-control note-title" data-ng-model="notesCtrl.editnote.title" placeholder="Card title (optional)" />
+	                        <div class="full-height">
+	                            <div class="container-fluid toolbar-container">
+	                                <div class="toolbar" id="edit-note-toolbar">
+	                                    <div class="controls">
+	                                        <div class="btn-group control font-type">
+	                                            <button type="button" class="btn btn-default dropdown-toggle" data-as-editor-control="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Font Type">
+	                                                Format <span class="caret"></span>
+	                                            </button>
+	                                            <ul class="dropdown-menu">
+	                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" data-as-editor-trigger-change="" href="javascript:;" unselectable="on" class="wysihtml5-command-active">Title</a></li>
+	                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Heading</a></li>
+	                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Subheading</a></li>
+	                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="p" data-as-editor-trigger-change="" href="javascript:;" unselectable="on" class="">Normal text</a></li>
+	                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="pre" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Fixed width</a></li>
+	                                                <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="blockquote" data-as-editor-trigger-change="" href="javascript:;" unselectable="on">Quote block</a></li>
+	                                            </ul>
+	                                        </div>
+	                                        <!-- TODO: on click, keep selected background colour -->
+	                                        <div class="control">
+	                                            <button type="button" class="btn btn-default" data-wysihtml5-command="bold" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Bold" unselectable="on">
+	                                                <span class="fa fa-bold" aria-hidden="true"></span>
+	                                            </button>
+	                                        </div>
+	                                        <div class="control control-separator">
+	                                            <button type="button" class="btn btn-default" data-wysihtml5-command="italic" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Italics" unselectable="on">
+	                                                <span class="fa fa-italic" aria-hidden="true"></span>
+	                                            </button>
+	                                        </div>
+	                                        <div class="control">
+	                                            <button type="button" class="btn btn-default" data-wysihtml5-command="insertUnorderedList" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Insert Unordered List" unselectable="on">
+	                                                <span class="fa fa-list-ul" aria-hidden="true"></span>
+	                                            </button>
+	                                        </div>
+	                                        <div class="control control-separator">
+	                                            <button type="button" class="btn btn-default" data-wysihtml5-command="insertOrderedList" data-as-editor-trigger-change="" data-as-tooltip="" title="" data-original-title="Insert Ordered List" unselectable="on">
+	                                                <span class="fa fa-list-ol" aria-hidden="true"></span>
+	                                            </button>
+	                                        </div>
+	                                        <div class="btn-group control link" data-as-toolbar-dialog>
+	                                            <button type="button" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-wysihtml5-command="createLink" title="Create Link">
+	                                                <span class="fa fa-link" aria-hidden="true"></span>
+	                                            </button>
+	                                            <div id="link-dialog" class="dropdown-menu dropdown-menu-right" data-as-link-dialog="#edit-note-content" data-wysihtml5-dialog="createLink">
+	                                                <div class="url-field">
+	                                                    <input type="text" class="form-control" id="modal-link-url" data-wysihtml5-dialog-field="href" value="http://">
+	                                                </div>
+	                                                <div>
+	                                                    <a class="btn btn-primary" data-wysihtml5-dialog-action="save">OK</a>
+	                                                    <a class="btn btn-default" data-wysihtml5-dialog-action="cancel">Cancel</a>
+	                                                    <a class="btn btn-default remove-link"><span class="fa fa-unlink"></span></a>
+												    	<a class="go-to-link"><span class="fa fa-external-link"></span></a>
+	                                                </div>
+	                                            </div>
+	                                        </div>
+	                                        <div class="fill"></div>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div data-as-editor="edit-note-toolbar" id="edit-note-content" data-ng-keyup="editNoteContentInvalid = $('#edit-note-content').data('wysiwyg').getValue() == ''" class="form-control note-content"
+	                                data-ng-model="notesCtrl.editnote.content" data-placeholder="Type here...">
+	                            </div>
+	                        </div>
+							<tags-input data-ng-model="notesCtrl.editnote.tags" />
+							
+							<div class="btn-group state">
+								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<span class="caret"></span><span class="text" data-ng-bind-html="notesCtrl.displayLockedStatus(notesCtrl.editnote.state)"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a data-ng-click="notesCtrl.editnote.state = ''">Unlocked <span class="fa fa-unlock"></span></a></li>
+									<li><a data-ng-click="notesCtrl.editnote.state = 'locked'">Locked <span class="fa fa-lock"></span></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div data-ng-show="notesCtrl.displayCitation">
+						<div data-ng-show="notesCtrl.editnote.citations.length > 0" class="citations">
+							<div class="citation-list">
+								<div data-ng-repeat="citation in notesCtrl.editnote.citations" class="citation">
+								 	<div class="options" data-ng-show="!citation.changed" data-ng-if="siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)">
+								 		<a data-ng-click="notesCtrl.editCitation(citation)">
+								 			<span class="fa fa-edit" aria-hidden="true"></span>
+								 		</a>
+								 		<a data-ng-click="notesCtrl.removeCitation(notesCtrl.editnote.citations, citation)">
+								 			<span class="fa fa-times-circle-o" aria-hidden="true"></span>
+								 		</a>
+								 	</div>
+								 	<div class="options" data-ng-show="citation.changed">
+								 		<a data-ng-click="notesCtrl.editCitation(citation)">
+								 			<span class="fa fa-times" aria-hidden="true"></span>
+								 		</a>
+								 	</div>
+									<div class="viewcitation" data-ng-show="!citation.changed">
+										<div data-ng-show="citation.article_title"><strong>Article Title:</strong> {{!citation.article_title}}</div>
+										<div data-ng-show="citation.page_title"><strong>Website Title:</strong> {{!citation.page_title}}</div>
+										<div data-ng-show="citation.url"><strong>URL:</strong> {{!citation.url}}</div>
+										<div data-ng-show="citation.author"><strong>Author:</strong> {{!citation.author}}</div>
+										<div data-ng-show="citation.publication_date"><strong>Publication Date:</strong> {{!citation.publication_date}}</div>
+									</div>
+									<div class="editcitation" data-ng-show="citation.changed">
+										<input type="text" data-ng-model="citation.article_title" class="form-control" placeholder="Article Title" />
+										<input type="text" data-ng-model="citation.page_title" class="form-control" placeholder="Website Title" />
+										<input type="text" data-ng-model="citation.url" class="form-control" placeholder="URL" />
+										<input type="text" data-ng-model="citation.author" class="form-control" placeholder="Author" />
+										<input type="text" data-ng-model="citation.publication_date" class="form-control" placeholder="Publication date" />
+									</div>
+								</div>
+								<a class="one-more-citation" data-as-add-citation data-as-to="notesCtrl.editnote.citations" data-ng-if="siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)">Add one more citation</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+
+					<button type="button" data-ng-if="notesCtrl.type == 'archive'" class="btn btn-primary" data-as-unarchive-note="notesCtrl.editnote" data-as-project-id="projectCtrl.projectId" data-as-request-id="notesCtrl.requestId">
+						<span class="fa fa-external-link" aria-hidden="true"></span> Reinstate
+					</button>
+					<button type="submit" class="btn btn-primary submit" data-ng-disabled="editNote.$invalid || editNoteContentInvalid || notesCtrl.invalidContent('#edit-note-content')" data-as-edit-note data-ng-if="notesCtrl.type != 'archive' && siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)">Save Card</button>
+                    <button type="button" class="btn btn-default cancel" data-dismiss="modal" data-ng-if="notesCtrl.type != 'archive' && siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)">Cancel</button>
+                    <button type="button" class="btn btn-default cancel" data-dismiss="modal" data-ng-if="notesCtrl.type == 'archive' || !siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)">Close</button>
+
+                    <div class="btn-group note-menu pull-right" data-ng-if="siteCtrl.validatePermission(notesCtrl.editnote.ref_id, 3, notesCtrl.editnote)">
+						<a class="note-cog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="fa fa-cog" aria-hidden="true"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li id="add-citation" data-ng-if="notesCtrl.type != 'archive'">
+								<button type="button" class="btn btn-link" data-as-add-citation data-as-to="notesCtrl.editnote.citations" data-ng-click="notesCtrl.displayCitation = true">
+									<span class="fa fa-book" aria-hidden="true"></span> Add Citation
+								</button>
+							</li>
+							<li role="separator" class="divider" data-ng-if="notesCtrl.type != 'archive'"></li>
+							<li id="copy-note" data-ng-if="notesCtrl.type != 'archive'">
+								<button type="button" class="btn btn-link" data-ng-disabled="editNoteContentInvalid || notesCtrl.invalidContent('#edit-note-content')" data-as-copy-note="notesCtrl.editnote" data-as-project-id="projectCtrl.projectId" data-as-request-id="notesCtrl.requestId">
+									<span class="fa fa-copy" aria-hidden="true"></span> Copy to <span data-ng-if="notesCtrl.editnote.ref_id.indexOf('p') === 0">your private library</span><span data-ng-if="notesCtrl.editnote.ref_id.indexOf('u') === 0">the Project "{{!projectCtrl.project.title}}"</span>
+								</button>
+							</li>
+							<li id="move-note" data-ng-if="notesCtrl.type != 'archive'">
+								<button type="button" class="btn btn-link" data-ng-disabled="editNoteContentInvalid || notesCtrl.invalidContent('#edit-note-content')" data-as-move-note="notesCtrl.editnote" data-as-project-id="projectCtrl.projectId" data-as-request-id="notesCtrl.requestId">
+									<span class="fa fa-external-link" aria-hidden="true"></span> Move to <span data-ng-if="notesCtrl.editnote.ref_id.indexOf('p') === 0">your private library</span><span data-ng-if="notesCtrl.editnote.ref_id.indexOf('u') === 0">the Project "{{!projectCtrl.project.title}}"</span>
+								</button>
+							</li>
+							<li role="separator" class="divider" data-ng-if="notesCtrl.type != 'archive'"></li>
+							<li id="archive-note" data-ng-if="notesCtrl.type != 'archive'">
+								<button type="button" class="btn btn-link" data-ng-disabled="editNoteContentInvalid || notesCtrl.invalidContent('#edit-note-content')" data-as-archive-note="notesCtrl.editnote" data-as-project-id="projectCtrl.projectId" data-as-request-id="notesCtrl.requestId">
+									<span class="fa fa-external-link" aria-hidden="true"></span> Archive
+								</button>
+							</li>
+							<li>
+								<button type="button" class="btn btn-link" data-dismiss="modal" data-toggle="modal" data-target="#confirm-note-modal">
+									<span class="fa fa-times-circle-o" aria-hidden="true"></span> Delete
+								</button>
+							</li>
+						</ul>
+					</div>
+
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+	
+<div class="modal fade" id="confirm-note-modal" tabindex="-1" role="dialog" aria-labelledby="confirmUNoteModalLabel" data-as-note-modal="notesCtrl.editnote" data-as-request-id="notesCtrl.requestId">
+	<div class="modal-dialog card-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="confirmUNoteModalLabel">Delete Note</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					Are you sure you wish to remove this note? This action cannot be undone.
+				</p>
+			</div>
+			<div class="modal-footer" data-as-note-menu>
+				<button type="button" class="btn btn-primary submit" data-dismiss="modal" data-as-delete-note>Yes, I am sure</button>
+                <button type="button" class="btn btn-default cancel" data-dismiss="modal">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
